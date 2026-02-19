@@ -47,12 +47,22 @@ jobs:
           echo 'Waiting for Mock API Server...';
           sleep 2;
         done
+        echo "--- Diagnostics after server start attempt ---"
+        echo "PWD: $(pwd)"
+        echo "Files in PWD:"
+        ls -al
+        echo "Java version:"
+        java -version
+        echo "Environment variables:"
+        env
+        echo "Java processes:"
+        ps aux | grep java || true
+        echo "--- End diagnostics ---"
         if ! curl --fail http://localhost:4567/hello; then
           echo "Server did not start in time" >&2
-          echo "--- nohup.out contents ---"
-          cat nohup.out || echo "nohup.out not found"
+          echo "--- nohup.out contents (last 100 lines) ---"
+          tail -n 100 nohup.out || echo "nohup.out not found"
           echo "--- end of nohup.out ---"
-          ps aux || true
           exit 1
         fi
         mvn test || TEST_RESULT=$?
