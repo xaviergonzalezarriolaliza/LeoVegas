@@ -35,9 +35,10 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: Copy dependencies
       run: mvn dependency:copy-dependencies -DincludeScope=runtime
-    - name: Start Mock API Server
+    - name: Start Mock API Server and Run Tests
       run: |
-        nohup java -cp "target/classes:target/dependency/*" com.leovegas.mockapi.MockApiServer &
+        nohup java -cp "target/classes:target/dependency/*" com.leovegas.mockapi.MockApiServer > nohup.out 2>&1 &
+        SERVER_PID=$!
         for i in {1..40}; do
           if curl --fail http://localhost:4567/hello; then
             echo 'Mock API Server is up!';
@@ -46,22 +47,17 @@ jobs:
           echo 'Waiting for Mock API Server...';
           sleep 2;
         done
-    - name: Wait for Mock API server to be ready
-      run: |
-        for i in {1..30}; do
-          if curl --fail http://localhost:4567/hello; then
-            echo "Server is up!"
-            exit 0
-          fi
-          sleep 2
-        done
-        echo "Server did not start in time" >&2
-        echo "--- nohup.out contents ---"
-        cat nohup.out || echo "nohup.out not found"
-        echo "--- end of nohup.out ---"
-        exit 1
-    - name: Run tests
-      run: mvn test
+        if ! curl --fail http://localhost:4567/hello; then
+          echo "Server did not start in time" >&2
+          echo "--- nohup.out contents ---"
+          cat nohup.out || echo "nohup.out not found"
+          echo "--- end of nohup.out ---"
+          exit 1
+        fi
+        mvn test || TEST_RESULT=$?
+        echo "Stopping Mock API Server (PID $SERVER_PID)"
+        kill $SERVER_PID || true
+        exit ${TEST_RESULT:-0}
     - name: Archive test reports
       if: always()
       uses: actions/upload-artifact@v4
