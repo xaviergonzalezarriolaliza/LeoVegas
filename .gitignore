@@ -1,0 +1,37 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+.eclipse/
+.classpath
+.project
+.settings/
+*.launch
+
+# VS Code
+.vscode/
+
+# Allure results
+allure-results/
+allure-report/
+
+# Surefire reports
+surefire-reports/
+
+# OS files
+.DS_Store
+Thumbs.db
