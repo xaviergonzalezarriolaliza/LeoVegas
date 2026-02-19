@@ -27,7 +27,7 @@ public class MockApiServer {
         get("/long", (req, res) -> {
             res.type("application/json");
             try {
-                Thread.sleep(5                git push -u origin master                git push -u origin master00);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
