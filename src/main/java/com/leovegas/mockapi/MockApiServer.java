@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class MockApiServer {
     public static void main(String[] args) {
+        ipAddress("0.0.0.0");
         port(4567); // Default Spark port
 
         get("/hello", (req, res) -> {

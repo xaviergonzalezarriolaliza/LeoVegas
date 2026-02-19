@@ -19,6 +19,17 @@ jobs:
         distribution: 'temurin'
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Start Mock API Server
+      run: |
+        nohup mvn exec:java -Dexec.mainClass="com.leovegas.mockapi.MockApiServer" &
+        for i in {1..40}; do
+          if curl --fail http://localhost:4567/hello; then
+            echo 'Mock API Server is up!';
+            break;
+          fi;
+          echo 'Waiting for Mock API Server...';
+          sleep 2;
+        done
     - name: Run tests
       run: mvn test
     - name: Archive test reports
@@ -27,3 +38,7 @@ jobs:
       with:
         name: surefire-reports
         path: target/surefire-reports/
+    - name: Stop Mock API Server
+      if: always()
+      run: |
+        pkill -f 'com.leovegas.mockapi.MockApiServer' || true
