@@ -3,6 +3,9 @@ package com.leovegas.apitest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
+import com.leovegas.mockapi.MockApiServer;
+import static spark.Spark.awaitInitialization;
+import static spark.Spark.stop;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
@@ -72,8 +75,23 @@ public class MockApiTest {
         }
     @BeforeAll
     public static void setup() {
+        // Start the embedded Mock API server in-process for tests
+        MockApiServer.main(new String[]{});
+        // Wait for Spark to initialize
+        awaitInitialization();
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 4567;
+    }
+
+    @AfterAll
+    public static void teardown() {
+        try {
+            stop();
+            // give Spark a moment to shutdown
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     @Test
