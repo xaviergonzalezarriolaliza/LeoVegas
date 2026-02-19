@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Mock API Server",
+			"type": "shell",
+			"command": "mvn exec:java -Dexec.mainClass=\"com.leovegas.mockapi.MockApiServer\"",
+			"args": [],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
