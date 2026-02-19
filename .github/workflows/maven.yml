@@ -52,9 +52,16 @@ jobs:
           echo "--- nohup.out contents ---"
           cat nohup.out || echo "nohup.out not found"
           echo "--- end of nohup.out ---"
+          ps aux || true
           exit 1
         fi
         mvn test || TEST_RESULT=$?
+        echo "--- nohup.out contents after tests ---"
+        cat nohup.out || echo "nohup.out not found"
+        echo "--- end of nohup.out ---"
+        echo "--- Process status (ps aux) ---"
+        ps aux || true
+        echo "--- End of process status ---"
         echo "Stopping Mock API Server (PID $SERVER_PID)"
         kill $SERVER_PID || true
         exit ${TEST_RESULT:-0}
