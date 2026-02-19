@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 import com.leovegas.mockapi.MockApiServer;
 import static spark.Spark.awaitInitialization;
 import static spark.Spark.stop;
+import java.net.ServerSocket;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
@@ -74,13 +75,18 @@ public class MockApiTest {
                 .statusCode(404);
         }
     @BeforeAll
-    public static void setup() {
-        // Start the embedded Mock API server in-process for tests
-        MockApiServer.main(new String[]{});
+    public static void setup() throws Exception {
+        // pick a free port and start the server on it to avoid CI port collisions
+        int port;
+        try (ServerSocket socket = new ServerSocket(0)) {
+            port = socket.getLocalPort();
+        }
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = port;
+        // Start the embedded Mock API server in-process for tests using the selected port
+        MockApiServer.main(new String[]{String.valueOf(port)});
         // Wait for Spark to initialize
         awaitInitialization();
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = 4567;
     }
 
     @AfterAll

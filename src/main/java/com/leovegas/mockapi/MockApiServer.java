@@ -8,7 +8,24 @@ import java.util.Map;
 public class MockApiServer {
     public static void main(String[] args) {
         ipAddress("0.0.0.0");
-        port(4567); // Default Spark port
+        int portNumber = 4567;
+        if (args != null && args.length > 0) {
+            try {
+                portNumber = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid port argument, using default 4567");
+            }
+        } else {
+            String prop = System.getProperty("mock.port");
+            if (prop != null) {
+                try {
+                    portNumber = Integer.parseInt(prop);
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid system property mock.port, using default 4567");
+                }
+            }
+        }
+        port(portNumber); // Default Spark port (can be overridden)
 
         get("/hello", (req, res) -> {
             res.type("application/json");
