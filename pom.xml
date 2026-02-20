@@ -41,11 +41,11 @@
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
-        <!-- Allure JUnit 5 adapter -->
+        <!-- Allure JUnit 5 adapter (use version compatible with CLI/plugin) -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
-            <version>2.21.0</version>
+            <version>2.13.9</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -70,11 +70,11 @@
                     <mainClass>com.leovegas.mockapi.MockApiServer</mainClass>
                 </configuration>
             </plugin>
-            <!-- Allure report generator via Maven (use newer version to match adapter) -->
+            <!-- Allure report generator via Maven -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
-                <version>2.21.0</version>
+                <version>2.11.2</version>
             </plugin>
         </plugins>
     </build>
