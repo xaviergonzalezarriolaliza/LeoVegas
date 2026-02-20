@@ -1,13 +1,14 @@
 package com.leovegas.apitest;
 
 import com.leovegas.mockapi.MockApiServer;
-import com.microsoft.playwright.APIRequest;
-import com.microsoft.playwright.APIRequestContext;
-import com.microsoft.playwright.APIResponse;
-import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.*;
 
 import java.net.ServerSocket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static spark.Spark.awaitInitialization;
@@ -16,9 +17,8 @@ import static spark.Spark.stop;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @org.junit.jupiter.api.extension.ExtendWith(TestLogger.class)
 public class PlaywrightMockApiTest {
-    private static Playwright playwright;
-    private static APIRequestContext request;
     private static String baseUrl;
+    private static HttpClient client;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -31,15 +31,14 @@ public class PlaywrightMockApiTest {
         MockApiServer.main(new String[]{String.valueOf(port)});
         awaitInitialization();
 
-        playwright = Playwright.create();
-        request = playwright.request().newContext(new APIRequest.NewContextOptions().setBaseURL(baseUrl));
+        client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
     }
 
     @AfterAll
     public static void teardown() {
         try {
-            if (request != null) request.dispose();
-            if (playwright != null) playwright.close();
             stop();
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -47,92 +46,112 @@ public class PlaywrightMockApiTest {
         }
     }
 
+    private HttpResponse<String> get(String path) throws Exception {
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + path))
+                .GET()
+                .build();
+        return client.send(req, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> post(String path, String body) throws Exception {
+        HttpRequest.Builder b = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + path))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body == null ? "" : body));
+        return client.send(b.build(), HttpResponse.BodyHandlers.ofString());
+    }
+
     @Test
     @Order(1)
-    public void testHelloEndpoint() {
-        APIResponse response = request.get("/hello");
-        assertEquals(200, response.status());
-        String body = response.text();
+    public void testHelloEndpoint() throws Exception {
+        HttpResponse<String> response = get("/hello");
+        assertEquals(200, response.statusCode());
+        String body = response.body();
         assertTrue(body.contains("\"message\":\"Hello, LeoVegas!\""));
 
-        APIResponse postResp = request.post("/hello");
-        int code = postResp.status();
+        HttpResponse<String> postResp = post("/hello", null);
+        int code = postResp.statusCode();
         assertTrue(code == 404 || code == 405);
     }
 
     @Test
     @Order(2)
-    public void testEchoEndpoint() {
+    public void testEchoEndpoint() throws Exception {
         String payload = "{\"id\":123,\"device\":\"iPhone\",\"os\":\"iOS 17\",\"foo\":\"bar\"}";
-        APIResponse resp = request.post("/echo", APIRequest.NewContextOptions.create().setData(payload).setExtraHTTPHeaders(null));
-        // Fallback: if the above builder usage isn't supported in some Playwright versions, call with plain body map
-        int status = resp.status();
-        assertEquals(200, status);
-        String text = resp.text();
+        HttpResponse<String> resp = post("/echo", payload);
+        assertEquals(200, resp.statusCode());
+        String text = resp.body();
         assertTrue(text.contains("\"id\":123"));
         assertTrue(text.contains("\"device\":\"iPhone\""));
         assertTrue(text.contains("\"os\":\"iOS 17\""));
         assertTrue(text.contains("\"foo\":\"bar\""));
 
-        APIResponse getResp = request.get("/echo");
-        int getCode = getResp.status();
+        HttpResponse<String> getResp = get("/echo");
+        int getCode = getResp.statusCode();
         assertTrue(getCode == 404 || getCode == 405);
     }
 
     @Test
     @Order(3)
-    public void testLongResponseTime() {
-        APIResponse resp = request.get("/long");
-        assertEquals(200, resp.status());
-        long time = resp.timing().duration();
-        System.out.println("Response time for GET /long endpoint: " + time + " ms");
+    public void testLongResponseTime() throws Exception {
+        long start = System.nanoTime();
+        HttpResponse<String> resp = get("/long");
+        long durationMs = (System.nanoTime() - start) / 1_000_000;
+        assertEquals(200, resp.statusCode());
+        System.out.println("Response time for GET /long endpoint: " + durationMs + " ms");
 
-        APIResponse postResp = request.post("/long");
-        int code = postResp.status();
+        HttpResponse<String> postResp = post("/long", null);
+        int code = postResp.statusCode();
         assertTrue(code == 404 || code == 405);
     }
 
     @Test
     @Order(4)
-    public void testInvalidEndpoint() {
-        APIResponse r1 = request.get("/notfound");
-        assertEquals(404, r1.status());
-        APIResponse r2 = request.post("/notfound");
-        assertEquals(404, r2.status());
+    public void testInvalidEndpoint() throws Exception {
+        HttpResponse<String> r1 = get("/notfound");
+        assertEquals(404, r1.statusCode());
+        HttpResponse<String> r2 = post("/notfound", null);
+        assertEquals(404, r2.statusCode());
     }
 
     @Test
     @Order(5)
-    public void testEchoEndpointWithMissingOrInvalidPayload() {
-        APIResponse empty = request.post("/echo");
-        assertEquals(200, empty.status());
-        assertTrue(empty.text().contains("\"echo\":\"\""));
+    public void testEchoEndpointWithMissingOrInvalidPayload() throws Exception {
+        HttpResponse<String> empty = post("/echo", null);
+        assertEquals(200, empty.statusCode());
+        assertTrue(empty.body().contains("\"echo\":\"\""));
 
-        APIResponse invalid = request.post("/echo", APIRequest.NewContextOptions.create().setData("not-a-json"));
-        assertEquals(200, invalid.status());
-        assertTrue(invalid.text().contains("not-a-json"));
+        HttpResponse<String> invalid = post("/echo", "not-a-json");
+        assertEquals(200, invalid.statusCode());
+        assertTrue(invalid.body().contains("not-a-json"));
 
         String partial = "{\"id\":456,\"device\":\"Android\"}";
-        APIResponse partialResp = request.post("/echo", APIRequest.NewContextOptions.create().setData(partial));
-        assertEquals(200, partialResp.status());
-        assertTrue(partialResp.text().contains("\"id\":456"));
-        assertTrue(partialResp.text().contains("\"device\":\"Android\""));
+        HttpResponse<String> partialResp = post("/echo", partial);
+        assertEquals(200, partialResp.statusCode());
+        assertTrue(partialResp.body().contains("\"id\":456"));
+        assertTrue(partialResp.body().contains("\"device\":\"Android\""));
 
-        APIResponse putResp = request.put("/echo", APIRequest.NewContextOptions.create().setData("{\"foo\":\"bar\"}"));
-        int code = putResp.status();
+        HttpRequest putReq = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/echo"))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString("{\"foo\":\"bar\"}"))
+                .build();
+        HttpResponse<String> putResp = client.send(putReq, HttpResponse.BodyHandlers.ofString());
+        int code = putResp.statusCode();
         assertTrue(code == 404 || code == 405);
     }
 
     @Test
     @Order(6)
-    public void testEchoEndpointWithManyFields() {
+    public void testEchoEndpointWithManyFields() throws Exception {
         String manyFieldsPayload = "{" +
                 "\"id\":1001,\"name\":\"Alice\",\"email\":\"alice@example.com\",\"age\":30,\"country\":\"SE\",\"city\":\"Stockholm\",\"zip\":\"11122\",\"device\":\"Android\",\"os\":\"Android 14\",\"appVersion\":\"5.2.1\",\"sessionId\":\"sess-abc-123\",\"isPremium\":true,\"balance\":1234.56,\"lastLogin\":\"2026-02-20T10:00:00Z\",\"locale\":\"sv-SE\",\"currency\":\"SEK\",\"features\":\"A,B,C\",\"tags\":\"tag1,tag2\",\"notes\":\"test user with many fields\"" +
                 "}";
 
-        APIResponse resp = request.post("/echo", APIRequest.NewContextOptions.create().setData(manyFieldsPayload));
-        assertEquals(200, resp.status());
-        String text = resp.text();
+        HttpResponse<String> resp = post("/echo", manyFieldsPayload);
+        assertEquals(200, resp.statusCode());
+        String text = resp.body();
         assertTrue(text.contains("\"id\":1001"));
         assertTrue(text.contains("\"name\":\"Alice\""));
         assertTrue(text.contains("\"email\":\"alice@example.com\""));
