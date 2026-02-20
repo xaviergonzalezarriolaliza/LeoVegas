@@ -11,6 +11,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <junit.version>5.10.0</junit.version>
+            <playwright.version>1.40.0</playwright.version>
         <restassured.version>5.4.0</restassured.version>
         <sparkjava.version>2.9.4</sparkjava.version>
     </properties>
@@ -40,6 +41,13 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
+        </dependency>
+        <!-- Playwright for Java (API testing via Playwright request context) -->
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- Allure JUnit 5 adapter (use version compatible with CLI/plugin) -->
         <!-- Allure removed -->

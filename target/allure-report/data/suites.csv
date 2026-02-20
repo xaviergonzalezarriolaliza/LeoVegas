@@ -1,6 +1,0 @@
-"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"passed","Fri Feb 20 19:54:07 CET 2026","Fri Feb 20 19:54:07 CET 2026","25","","com.leovegas.apitest.MockApiTest","","com.leovegas.apitest.MockApiTest","testInvalidEndpoint","testInvalidEndpoint()",""
-"passed","Fri Feb 20 19:54:02 CET 2026","Fri Feb 20 19:54:07 CET 2026","5037","","com.leovegas.apitest.MockApiTest","","com.leovegas.apitest.MockApiTest","testLongResponseTime","testLongResponseTime()",""
-"passed","Fri Feb 20 19:53:59 CET 2026","Fri Feb 20 19:54:01 CET 2026","2525","","com.leovegas.apitest.MockApiTest","","com.leovegas.apitest.MockApiTest","testHelloEndpoint","testHelloEndpoint()",""
-"passed","Fri Feb 20 19:54:02 CET 2026","Fri Feb 20 19:54:02 CET 2026","99","","com.leovegas.apitest.MockApiTest","","com.leovegas.apitest.MockApiTest","testEchoEndpoint","testEchoEndpoint()",""
-"passed","Fri Feb 20 19:54:07 CET 2026","Fri Feb 20 19:54:07 CET 2026","95","","com.leovegas.apitest.MockApiTest","","com.leovegas.apitest.MockApiTest","testEchoEndpointWithMissingOrInvalidPayload","testEchoEndpointWithMissingOrInvalidPayload()",""
