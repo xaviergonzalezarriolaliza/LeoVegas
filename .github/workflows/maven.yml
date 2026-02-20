@@ -91,12 +91,24 @@ jobs:
         if [ -d "allure-results" ]; then cp -r allure-results/* target/allure-results/ || true; fi
         # generate Allure HTML report using Maven plugin
         mvn io.qameta.allure:allure-maven:2.11.2:report -Dallure.report.directory=target/allure-report || true
+    - name: Restore Allure history
+      if: always()
+      uses: actions/cache@v4
+      with:
+        path: target/allure-report/history
+        key: allure-history-${{ github.ref }}
     - name: Upload Allure report
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: allure-report
         path: target/allure-report/
+    - name: Cache Allure history
+      if: always()
+      uses: actions/cache@v4
+      with:
+        path: target/allure-report/history
+        key: allure-history-${{ github.ref }}
     - name: Stop Mock API Server
       if: always()
       run: |
