@@ -168,4 +168,42 @@ public class MockApiTest {
         .then()
             .statusCode(anyOf(is(404), is(405)));
     }
-}
+ 
+    @Test
+    @Order(6)
+    public void testEchoEndpointWithManyFields() {
+        String manyFieldsPayload = "{" +
+                "\"id\":1001,\"name\":\"Alice\",\"email\":\"alice@example.com\",\"age\":30,\"country\":\"SE\",\"city\":\"Stockholm\",\"zip\":\"11122\",\"device\":\"Android\",\"os\":\"Android 14\",\"appVersion\":\"5.2.1\",\"sessionId\":\"sess-abc-123\",\"isPremium\":true,\"balance\":1234.56,\"lastLogin\":\"2026-02-20T10:00:00Z\",\"locale\":\"sv-SE\",\"currency\":\"SEK\",\"features\":\"A,B,C\",\"tags\":\"tag1,tag2\",\"notes\":\"test user with many fields\"" +
+                "}";
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(manyFieldsPayload)
+        .when()
+            .post("/echo")
+        .then()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .body("echo", allOf(
+                containsString("\"id\":1001"),
+                containsString("\"name\":\"Alice\""),
+                containsString("\"email\":\"alice@example.com\""),
+                containsString("\"age\":30"),
+                containsString("\"country\":\"SE\""),
+                containsString("\"city\":\"Stockholm\""),
+                containsString("\"device\":\"Android\""),
+                containsString("\"os\":\"Android 14\""),
+                containsString("\"appVersion\":\"5.2.1\""),
+                containsString("\"sessionId\":\"sess-abc-123\""),
+                containsString("\"isPremium\":true"),
+                containsString("\"balance\":1234.56"),
+                containsString("\"lastLogin\":\"2026-02-20T10:00:00Z\""),
+                containsString("\"locale\":\"sv-SE\""),
+                containsString("\"currency\":\"SEK\""),
+                containsString("\"features\":\"A,B,C\""),
+                containsString("\"tags\":\"tag1,tag2\""),
+                containsString("\"notes\":\"test user with many fields\"")
+            ));
+    }
+
+            }
