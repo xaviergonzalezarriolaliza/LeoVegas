@@ -12,6 +12,7 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@org.junit.jupiter.api.extension.ExtendWith(io.qameta.allure.junit5.AllureJunit5.class)
 public class MockApiTest {
             @Test
     @Order(5)
