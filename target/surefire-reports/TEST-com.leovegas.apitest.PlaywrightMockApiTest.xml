@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.leovegas.apitest.MockApiTest" time="9.518" tests="6" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.leovegas.apitest.PlaywrightMockApiTest" time="5.77" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -60,37 +60,33 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="testHelloEndpoint" classname="com.leovegas.apitest.MockApiTest" time="2.788">
+  <testcase name="testHelloEndpoint" classname="com.leovegas.apitest.PlaywrightMockApiTest" time="0.099">
     <system-out><![CDATA[&amp#27;[36m[RUNNING] testHelloEndpoint()&amp#27;[0m
 &amp#27;[32m[TEST] testHelloEndpoint() - PASS&amp#27;[0m
 ]]></system-out>
-    <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-SLF4J: Defaulting to no-operation (NOP) logger implementation
-SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-]]></system-err>
   </testcase>
-  <testcase name="testEchoEndpoint" classname="com.leovegas.apitest.MockApiTest" time="0.131">
+  <testcase name="testEchoEndpoint" classname="com.leovegas.apitest.PlaywrightMockApiTest" time="0.016">
     <system-out><![CDATA[&amp#27;[36m[RUNNING] testEchoEndpoint()&amp#27;[0m
 &amp#27;[32m[TEST] testEchoEndpoint() - PASS&amp#27;[0m
 ]]></system-out>
   </testcase>
-  <testcase name="testLongResponseTime" classname="com.leovegas.apitest.MockApiTest" time="5.042">
+  <testcase name="testLongResponseTime" classname="com.leovegas.apitest.PlaywrightMockApiTest" time="5.012">
     <system-out><![CDATA[&amp#27;[36m[RUNNING] testLongResponseTime()&amp#27;[0m
-Response time for GET /long endpoint: 5014 ms
+Response time for GET /long endpoint: 5008 ms
 &amp#27;[32m[TEST] testLongResponseTime() - PASS&amp#27;[0m
 ]]></system-out>
   </testcase>
-  <testcase name="testInvalidEndpoint" classname="com.leovegas.apitest.MockApiTest" time="0.029">
+  <testcase name="testInvalidEndpoint" classname="com.leovegas.apitest.PlaywrightMockApiTest" time="0.007">
     <system-out><![CDATA[&amp#27;[36m[RUNNING] testInvalidEndpoint()&amp#27;[0m
 &amp#27;[32m[TEST] testInvalidEndpoint() - PASS&amp#27;[0m
 ]]></system-out>
   </testcase>
-  <testcase name="testEchoEndpointWithMissingOrInvalidPayload" classname="com.leovegas.apitest.MockApiTest" time="0.108">
+  <testcase name="testEchoEndpointWithMissingOrInvalidPayload" classname="com.leovegas.apitest.PlaywrightMockApiTest" time="0.019">
     <system-out><![CDATA[&amp#27;[36m[RUNNING] testEchoEndpointWithMissingOrInvalidPayload()&amp#27;[0m
 &amp#27;[32m[TEST] testEchoEndpointWithMissingOrInvalidPayload() - PASS&amp#27;[0m
 ]]></system-out>
   </testcase>
-  <testcase name="testEchoEndpointWithManyFields" classname="com.leovegas.apitest.MockApiTest" time="0.036">
+  <testcase name="testEchoEndpointWithManyFields" classname="com.leovegas.apitest.PlaywrightMockApiTest" time="0.005">
     <system-out><![CDATA[&amp#27;[36m[RUNNING] testEchoEndpointWithManyFields()&amp#27;[0m
 &amp#27;[32m[TEST] testEchoEndpointWithManyFields() - PASS&amp#27;[0m
 ]]></system-out>

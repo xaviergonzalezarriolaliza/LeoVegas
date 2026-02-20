@@ -70,7 +70,26 @@ public class PlaywrightMockApiTest {
         try {
             JsonObject obj = g.fromJson(body, JsonObject.class);
             if (obj.has("echo") && !obj.get("echo").isJsonNull()) {
-                return obj.get("echo").getAsString();
+                // The server stores the raw request body in the "echo" field.
+                // It may be returned as a JSON primitive containing either
+                // - a raw JSON string (e.g. {"id":123,...}) or
+                // - an already-escaped JSON string (double-encoded). Handle both.
+                if (obj.get("echo").isJsonPrimitive()) {
+                    String inner = obj.get("echo").getAsString();
+                    // If inner itself is JSON (object/array), return it as-is.
+                    try {
+                        // Parse without throwing for plain strings
+                        com.google.gson.JsonElement parsed = g.fromJson(inner, com.google.gson.JsonElement.class);
+                        if (parsed != null && (parsed.isJsonObject() || parsed.isJsonArray())) {
+                            return g.toJson(parsed);
+                        }
+                    } catch (Exception ignored) {
+                        // not parseable as JSON, fall-through and return raw inner
+                    }
+                    return inner;
+                } else if (obj.get("echo").isJsonObject() || obj.get("echo").isJsonArray()) {
+                    return g.toJson(obj.get("echo"));
+                }
             }
         } catch (Exception e) {
             // fall through
