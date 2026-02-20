@@ -36,9 +36,27 @@ public class MockApiServer {
 
         post("/echo", (req, res) -> {
             res.type("application/json");
+            Gson gson = new Gson();
             Map<String, Object> response = new HashMap<>();
-            response.put("echo", req.body());
-            return new Gson().toJson(response);
+            String body = req.body();
+            if (body == null || body.isBlank()) {
+                response.put("echo", "");
+            } else {
+                try {
+                    com.google.gson.JsonElement parsed = gson.fromJson(body, com.google.gson.JsonElement.class);
+                    if (parsed != null && (parsed.isJsonObject() || parsed.isJsonArray())) {
+                        // Return the parsed JSON structure under "echo"
+                        response.put("echo", parsed);
+                    } else {
+                        // Primitive JSON (number/string) or not an object/array - return raw body
+                        response.put("echo", body);
+                    }
+                } catch (Exception e) {
+                    // Not valid JSON - echo the raw body string
+                    response.put("echo", body);
+                }
+            }
+            return gson.toJson(response);
         });
 
         // Simulate a long response (2 seconds)
