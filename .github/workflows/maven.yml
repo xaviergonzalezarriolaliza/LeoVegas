@@ -82,6 +82,17 @@ jobs:
       with:
         name: surefire-reports
         path: target/surefire-reports/
+    - name: Generate Allure report
+      if: always()
+      run: |
+        # generate Allure HTML report from results produced by tests
+        mvn io.qameta.allure:allure-maven:2.11.2:report -Dallure.results.directory=target/allure-results -Dallure.report.directory=target/allure-report || true
+    - name: Upload Allure report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: target/allure-report/
     - name: Stop Mock API Server
       if: always()
       run: |
