@@ -32,12 +32,15 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - name: Set up Node.js for Playwright
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
     - name: Install Playwright system dependencies and browsers
       if: runner.os == 'Linux'
-      uses: microsoft/playwright-github-action@v1
-      with:
-        install-deps: true
-        browsers: all
+      run: |
+        npx playwright@latest install --with-deps
+      shell: bash
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Copy dependencies
