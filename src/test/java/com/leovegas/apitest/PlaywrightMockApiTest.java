@@ -11,6 +11,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import static spark.Spark.awaitInitialization;
 import static spark.Spark.stop;
 
@@ -62,6 +64,20 @@ public class PlaywrightMockApiTest {
         return client.send(b.build(), HttpResponse.BodyHandlers.ofString());
     }
 
+    private String extractEcho(HttpResponse<String> resp) {
+        String body = resp.body();
+        Gson g = new Gson();
+        try {
+            JsonObject obj = g.fromJson(body, JsonObject.class);
+            if (obj.has("echo") && !obj.get("echo").isJsonNull()) {
+                return obj.get("echo").getAsString();
+            }
+        } catch (Exception e) {
+            // fall through
+        }
+        return "";
+    }
+
     @Test
     @Order(1)
     public void testHelloEndpoint() throws Exception {
@@ -81,11 +97,11 @@ public class PlaywrightMockApiTest {
         String payload = "{\"id\":123,\"device\":\"iPhone\",\"os\":\"iOS 17\",\"foo\":\"bar\"}";
         HttpResponse<String> resp = post("/echo", payload);
         assertEquals(200, resp.statusCode());
-        String text = resp.body();
-        assertTrue(text.contains("\"id\":123"));
-        assertTrue(text.contains("\"device\":\"iPhone\""));
-        assertTrue(text.contains("\"os\":\"iOS 17\""));
-        assertTrue(text.contains("\"foo\":\"bar\""));
+        String echoed = extractEcho(resp);
+        assertTrue(echoed.contains("\"id\":123"));
+        assertTrue(echoed.contains("\"device\":\"iPhone\""));
+        assertTrue(echoed.contains("\"os\":\"iOS 17\""));
+        assertTrue(echoed.contains("\"foo\":\"bar\""));
 
         HttpResponse<String> getResp = get("/echo");
         int getCode = getResp.statusCode();
@@ -120,17 +136,20 @@ public class PlaywrightMockApiTest {
     public void testEchoEndpointWithMissingOrInvalidPayload() throws Exception {
         HttpResponse<String> empty = post("/echo", null);
         assertEquals(200, empty.statusCode());
-        assertTrue(empty.body().contains("\"echo\":\"\""));
+        String echoedEmpty = extractEcho(empty);
+        assertEquals("", echoedEmpty);
 
         HttpResponse<String> invalid = post("/echo", "not-a-json");
         assertEquals(200, invalid.statusCode());
-        assertTrue(invalid.body().contains("not-a-json"));
+        String echoedInvalid = extractEcho(invalid);
+        assertTrue(echoedInvalid.contains("not-a-json"));
 
         String partial = "{\"id\":456,\"device\":\"Android\"}";
         HttpResponse<String> partialResp = post("/echo", partial);
         assertEquals(200, partialResp.statusCode());
-        assertTrue(partialResp.body().contains("\"id\":456"));
-        assertTrue(partialResp.body().contains("\"device\":\"Android\""));
+        String echoedPartial = extractEcho(partialResp);
+        assertTrue(echoedPartial.contains("\"id\":456"));
+        assertTrue(echoedPartial.contains("\"device\":\"Android\""));
 
         HttpRequest putReq = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "/echo"))
@@ -151,7 +170,7 @@ public class PlaywrightMockApiTest {
 
         HttpResponse<String> resp = post("/echo", manyFieldsPayload);
         assertEquals(200, resp.statusCode());
-        String text = resp.body();
+        String text = extractEcho(resp);
         assertTrue(text.contains("\"id\":1001"));
         assertTrue(text.contains("\"name\":\"Alice\""));
         assertTrue(text.contains("\"email\":\"alice@example.com\""));
