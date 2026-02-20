@@ -82,33 +82,17 @@ jobs:
       with:
         name: surefire-reports
         path: target/surefire-reports/
-    - name: Prepare Allure results and generate report
+    - name: Generate Spec-style report (Surefire)
       if: always()
       run: |
-        # some Allure adapters write results to ./allure-results (project root)
-        # ensure plugin sees them under target/allure-results
-        mkdir -p target/allure-results || true
-        if [ -d "allure-results" ]; then cp -r allure-results/* target/allure-results/ || true; fi
-        # generate Allure HTML report using Maven plugin
-        mvn io.qameta.allure:allure-maven:2.11.2:report -Dallure.report.directory=target/allure-report || true
-    - name: Restore Allure history
-      if: always()
-      uses: actions/cache@v4
-      with:
-        path: target/allure-report/history
-        key: allure-history-${{ github.ref }}
-    - name: Upload Allure report
+        mvn surefire-report:report -DskipTests=true
+    - name: Upload Spec report
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: allure-report
-        path: target/allure-report/
-    - name: Cache Allure history
-      if: always()
-      uses: actions/cache@v4
-      with:
-        path: target/allure-report/history
-        key: allure-history-${{ github.ref }}
+        name: spec-report
+        path: target/site/
+    # Allure report generation and upload removed
     - name: Stop Mock API Server
       if: always()
       run: |

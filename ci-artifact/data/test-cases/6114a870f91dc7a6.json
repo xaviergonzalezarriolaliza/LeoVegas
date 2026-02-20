@@ -1,0 +1,95 @@
+{
+  "uid" : "6114a870f91dc7a6",
+  "name" : "testInvalidEndpoint()",
+  "fullName" : "com.leovegas.apitest.MockApiTest.testInvalidEndpoint",
+  "historyId" : "74fb3c1bcca2f2d8512f63c5fdc8b745",
+  "time" : {
+    "start" : 1771614567229,
+    "stop" : 1771614567247,
+    "duration" : 18
+  },
+  "description" : "",
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "setup",
+    "time" : {
+      "start" : 1771614560446,
+      "stop" : 1771614560767,
+      "duration" : 321
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 0,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : false
+  } ],
+  "afterStages" : [ {
+    "name" : "teardown",
+    "time" : {
+      "start" : 1771614567346,
+      "stop" : 1771614567846,
+      "duration" : 500
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 0,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : false
+  } ],
+  "labels" : [ {
+    "name" : "host",
+    "value" : "runnervmwffz4"
+  }, {
+    "name" : "thread",
+    "value" : "2687@runnervmwffz4.main(1)"
+  }, {
+    "name" : "framework",
+    "value" : "junit-platform"
+  }, {
+    "name" : "language",
+    "value" : "java"
+  }, {
+    "name" : "package",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "testClass",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "testMethod",
+    "value" : "testInvalidEndpoint"
+  }, {
+    "name" : "suite",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ {
+      "uid" : "3b18532d3e649e1f",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771614546111,
+        "stop" : 1771614546129,
+        "duration" : 18
+      }
+    } ],
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "6114a870f91dc7a6.json",
+  "parameterValues" : [ ]
+}

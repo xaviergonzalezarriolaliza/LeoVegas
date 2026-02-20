@@ -1,0 +1,95 @@
+{
+  "uid" : "a080c96cb756c25",
+  "name" : "testEchoEndpoint()",
+  "fullName" : "com.leovegas.apitest.MockApiTest.testEchoEndpoint",
+  "historyId" : "dda76f8551bc45f5ac82025ec059580d",
+  "time" : {
+    "start" : 1771613642040,
+    "stop" : 1771613642139,
+    "duration" : 99
+  },
+  "description" : "",
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "setup",
+    "time" : {
+      "start" : 1771613638657,
+      "stop" : 1771613639357,
+      "duration" : 700
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "afterStages" : [ {
+    "name" : "teardown",
+    "time" : {
+      "start" : 1771613647324,
+      "stop" : 1771613647828,
+      "duration" : 504
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "labels" : [ {
+    "name" : "host",
+    "value" : "455u5"
+  }, {
+    "name" : "thread",
+    "value" : "8348@455u5.main(1)"
+  }, {
+    "name" : "framework",
+    "value" : "junit-platform"
+  }, {
+    "name" : "language",
+    "value" : "java"
+  }, {
+    "name" : "package",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "testClass",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "testMethod",
+    "value" : "testEchoEndpoint"
+  }, {
+    "name" : "suite",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ {
+      "uid" : "d4fbeb6cbbffe322",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771612753954,
+        "stop" : 1771612754048,
+        "duration" : 94
+      }
+    } ],
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "a080c96cb756c25.json",
+  "parameterValues" : [ ]
+}

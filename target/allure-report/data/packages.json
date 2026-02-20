@@ -1,0 +1,74 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "name" : "packages",
+  "children" : [ {
+    "name" : "com.leovegas.apitest.MockApiTest",
+    "children" : [ {
+      "name" : "testHelloEndpoint",
+      "uid" : "2d06d8fc15fbb6e3",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771613639417,
+        "stop" : 1771613641942,
+        "duration" : 2525
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testEchoEndpoint",
+      "uid" : "a080c96cb756c25",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771613642040,
+        "stop" : 1771613642139,
+        "duration" : 99
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testLongResponseTime",
+      "uid" : "e5cee5a1656ae63e",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771613642147,
+        "stop" : 1771613647184,
+        "duration" : 5037
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testInvalidEndpoint",
+      "uid" : "9cf5748bdbc48f4d",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771613647191,
+        "stop" : 1771613647216,
+        "duration" : 25
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testEchoEndpointWithMissingOrInvalidPayload",
+      "uid" : "716f20d6a1b66ae0",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771613647223,
+        "stop" : 1771613647318,
+        "duration" : 95
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "com.leovegas.apitest.MockApiTest"
+  } ]
+}

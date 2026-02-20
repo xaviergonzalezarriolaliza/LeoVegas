@@ -1,0 +1,61 @@
+[ {
+  "uid" : "454323ab9fd16c9a",
+  "name" : "testHelloEndpoint()",
+  "time" : {
+    "start" : 1771614560795,
+    "stop" : 1771614562075,
+    "duration" : 1280
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "d3143eb6180da59f",
+  "name" : "testEchoEndpoint()",
+  "time" : {
+    "start" : 1771614562122,
+    "stop" : 1771614562197,
+    "duration" : 75
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "6114a870f91dc7a6",
+  "name" : "testInvalidEndpoint()",
+  "time" : {
+    "start" : 1771614567229,
+    "stop" : 1771614567247,
+    "duration" : 18
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "550e851d13757e60",
+  "name" : "testEchoEndpointWithMissingOrInvalidPayload()",
+  "time" : {
+    "start" : 1771614567250,
+    "stop" : 1771614567320,
+    "duration" : 70
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "4efd6bf474c95f54",
+  "name" : "testLongResponseTime()",
+  "time" : {
+    "start" : 1771614562202,
+    "stop" : 1771614567225,
+    "duration" : 5023
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "873596455bf37421",
+  "name" : "testEchoEndpointWithManyFields()",
+  "time" : {
+    "start" : 1771614567323,
+    "stop" : 1771614567343,
+    "duration" : 20
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]

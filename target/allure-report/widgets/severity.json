@@ -1,0 +1,51 @@
+[ {
+  "uid" : "e5cee5a1656ae63e",
+  "name" : "testLongResponseTime()",
+  "time" : {
+    "start" : 1771613642147,
+    "stop" : 1771613647184,
+    "duration" : 5037
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "9cf5748bdbc48f4d",
+  "name" : "testInvalidEndpoint()",
+  "time" : {
+    "start" : 1771613647191,
+    "stop" : 1771613647216,
+    "duration" : 25
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "716f20d6a1b66ae0",
+  "name" : "testEchoEndpointWithMissingOrInvalidPayload()",
+  "time" : {
+    "start" : 1771613647223,
+    "stop" : 1771613647318,
+    "duration" : 95
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "a080c96cb756c25",
+  "name" : "testEchoEndpoint()",
+  "time" : {
+    "start" : 1771613642040,
+    "stop" : 1771613642139,
+    "duration" : 99
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "2d06d8fc15fbb6e3",
+  "name" : "testHelloEndpoint()",
+  "time" : {
+    "start" : 1771613639417,
+    "stop" : 1771613641942,
+    "duration" : 2525
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]

@@ -1,0 +1,85 @@
+{
+  "uid" : "c31b2a65674cb65b",
+  "name" : "testLongResponseTime()",
+  "fullName" : "com.leovegas.apitest.MockApiTest.testLongResponseTime",
+  "historyId" : "86c064ba1b5ad1a1ff5ee478dc76ba0c",
+  "time" : {
+    "start" : 1771612754054,
+    "stop" : 1771612759094,
+    "duration" : 5040
+  },
+  "description" : "",
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "setup",
+    "time" : {
+      "start" : 1771612750729,
+      "stop" : 1771612751376,
+      "duration" : 647
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "afterStages" : [ {
+    "name" : "teardown",
+    "time" : {
+      "start" : 1771612759232,
+      "stop" : 1771612759741,
+      "duration" : 509
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "labels" : [ {
+    "name" : "host",
+    "value" : "455u5"
+  }, {
+    "name" : "thread",
+    "value" : "27204@455u5.main(1)"
+  }, {
+    "name" : "framework",
+    "value" : "junit-platform"
+  }, {
+    "name" : "language",
+    "value" : "java"
+  }, {
+    "name" : "package",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "testClass",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "testMethod",
+    "value" : "testLongResponseTime"
+  }, {
+    "name" : "suite",
+    "value" : "com.leovegas.apitest.MockApiTest"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : true,
+  "retry" : true,
+  "extra" : {
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "c31b2a65674cb65b.json",
+  "parameterValues" : [ ]
+}

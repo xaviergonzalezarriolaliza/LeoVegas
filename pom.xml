@@ -42,12 +42,7 @@
             <version>2.10.1</version>
         </dependency>
         <!-- Allure JUnit 5 adapter (use version compatible with CLI/plugin) -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
-            <version>2.13.9</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- Allure removed -->
     </dependencies>
     <build>
         <plugins>
@@ -57,10 +52,20 @@
                 <version>3.2.5</version>
                 <configuration>
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <!-- Print test output directly to console in CI (spec-style) -->
+                    <useFile>false</useFile>
+                    <printSummary>true</printSummary>
+                    <trimStackTrace>false</trimStackTrace>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <!-- Generate surefire HTML/text report (can be invoked in CI) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.1.2</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -70,12 +75,7 @@
                     <mainClass>com.leovegas.mockapi.MockApiServer</mainClass>
                 </configuration>
             </plugin>
-            <!-- Allure report generator via Maven -->
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>2.11.2</version>
-            </plugin>
+            <!-- Allure Maven plugin removed -->
         </plugins>
     </build>
 </project>

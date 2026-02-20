@@ -1,0 +1,87 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "name" : "packages",
+  "children" : [ {
+    "name" : "com.leovegas.apitest.MockApiTest",
+    "children" : [ {
+      "name" : "testHelloEndpoint",
+      "uid" : "454323ab9fd16c9a",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771614560795,
+        "stop" : 1771614562075,
+        "duration" : 1280
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testEchoEndpoint",
+      "uid" : "d3143eb6180da59f",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771614562122,
+        "stop" : 1771614562197,
+        "duration" : 75
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testLongResponseTime",
+      "uid" : "4efd6bf474c95f54",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771614562202,
+        "stop" : 1771614567225,
+        "duration" : 5023
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testInvalidEndpoint",
+      "uid" : "6114a870f91dc7a6",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771614567229,
+        "stop" : 1771614567247,
+        "duration" : 18
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testEchoEndpointWithMissingOrInvalidPayload",
+      "uid" : "550e851d13757e60",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771614567250,
+        "stop" : 1771614567320,
+        "duration" : 70
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "testEchoEndpointWithManyFields",
+      "uid" : "873596455bf37421",
+      "parentUid" : "f1099a9b1484c113fb6264b156aaa70a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1771614567323,
+        "stop" : 1771614567343,
+        "duration" : 20
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "com.leovegas.apitest.MockApiTest"
+  } ]
+}
