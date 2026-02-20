@@ -4,21 +4,21 @@ on:
   push:
     branches: [ main ]
     paths:
-      - '**.yml'
-      - '**.yaml'
-      - '**.java'
-      - '**.md'
-      - '**.txt'
-      - '**.xml'
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.java'
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.xml'
   pull_request:
     branches: [ main ]
     paths:
-      - '**.yml'
-      - '**.yaml'
-      - '**.java'
-      - '**.md'
-      - '**.txt'
-      - '**.xml'
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.java'
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.xml'
   workflow_dispatch: {}
 
 jobs:
