@@ -70,11 +70,11 @@
                     <mainClass>com.leovegas.mockapi.MockApiServer</mainClass>
                 </configuration>
             </plugin>
-            <!-- Allure report generator via Maven -->
+            <!-- Allure report generator via Maven (use newer version to match adapter) -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
-                <version>2.11.2</version>
+                <version>2.21.0</version>
             </plugin>
         </plugins>
     </build>
