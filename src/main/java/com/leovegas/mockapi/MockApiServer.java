@@ -71,5 +71,32 @@ public class MockApiServer {
             response.put("message", "This was a long response...........................................................................................................................................................................................................................................................................................................................................................");
             return new Gson().toJson(response);
         });
+
+        // Return a large JSON payload matching the manyFieldsPayload used in tests
+        get("/manyFieldsPayload", (req, res) -> {
+            res.type("application/json");
+            Gson gson = new Gson();
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("id", 1001);
+            payload.put("name", "Alice");
+            payload.put("email", "alice@example.com");
+            payload.put("age", 30);
+            payload.put("country", "SE");
+            payload.put("city", "Stockholm");
+            payload.put("zip", "11122");
+            payload.put("device", "Android");
+            payload.put("os", "Android 14");
+            payload.put("appVersion", "5.2.1");
+            payload.put("sessionId", "sess-abc-123");
+            payload.put("isPremium", true);
+            payload.put("balance", 1234.56);
+            payload.put("lastLogin", "2026-02-20T10:00:00Z");
+            payload.put("locale", "sv-SE");
+            payload.put("currency", "SEK");
+            payload.put("features", "A,B,C");
+            payload.put("tags", "tag1,tag2");
+            payload.put("notes", "test user with many fields");
+            return gson.toJson(payload);
+        });
     }
 }

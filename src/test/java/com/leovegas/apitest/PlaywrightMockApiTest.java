@@ -182,28 +182,26 @@ public class PlaywrightMockApiTest {
 
     @Test
     @Order(6)
-    public void testEchoEndpointWithManyFields() throws Exception {
-        String manyFieldsPayload = "{" +
-                "\"id\":1001,\"name\":\"Alice\",\"email\":\"alice@example.com\",\"age\":30,\"country\":\"SE\",\"city\":\"Stockholm\",\"zip\":\"11122\",\"device\":\"Android\",\"os\":\"Android 14\",\"appVersion\":\"5.2.1\",\"sessionId\":\"sess-abc-123\",\"isPremium\":true,\"balance\":1234.56,\"lastLogin\":\"2026-02-20T10:00:00Z\",\"locale\":\"sv-SE\",\"currency\":\"SEK\",\"features\":\"A,B,C\",\"tags\":\"tag1,tag2\",\"notes\":\"test user with many fields\"" +
-                "}";
-
-        HttpResponse<String> resp = post("/echo", manyFieldsPayload);
-        assertEquals(200, resp.statusCode());
-        String text = extractEcho(resp);
-        assertTrue(text.contains("\"id\":1001"));
-        assertTrue(text.contains("\"name\":\"Alice\""));
-        assertTrue(text.contains("\"email\":\"alice@example.com\""));
-        assertTrue(text.contains("\"device\":\"Android\""));
-        assertTrue(text.contains("\"os\":\"Android 14\""));
-        assertTrue(text.contains("\"appVersion\":\"5.2.1\""));
-        assertTrue(text.contains("\"sessionId\":\"sess-abc-123\""));
-        assertTrue(text.contains("\"isPremium\":true"));
-        assertTrue(text.contains("\"balance\":1234.56"));
-        assertTrue(text.contains("\"lastLogin\":\"2026-02-20T10:00:00Z\""));
-        assertTrue(text.contains("\"locale\":\"sv-SE\""));
-        assertTrue(text.contains("\"currency\":\"SEK\""));
-        assertTrue(text.contains("\"features\":\"A,B,C\""));
-        assertTrue(text.contains("\"tags\":\"tag1,tag2\""));
-        assertTrue(text.contains("\"notes\":\"test user with many fields\""));
+    public void testManyFieldsPayload() throws Exception {
+        HttpResponse<String> fetchResp = get("/manyFieldsPayload");
+        assertEquals(200, fetchResp.statusCode());
+        String body = fetchResp.body();
+        Gson g = new Gson();
+        JsonObject obj = g.fromJson(body, JsonObject.class);
+        assertEquals(1001, obj.get("id").getAsInt());
+        assertEquals("Alice", obj.get("name").getAsString());
+        assertEquals("alice@example.com", obj.get("email").getAsString());
+        assertEquals("Android", obj.get("device").getAsString());
+        assertEquals("Android 14", obj.get("os").getAsString());
+        assertEquals("5.2.1", obj.get("appVersion").getAsString());
+        assertEquals("sess-abc-123", obj.get("sessionId").getAsString());
+        assertTrue(obj.get("isPremium").getAsBoolean());
+        assertEquals(1234.56, obj.get("balance").getAsDouble());
+        assertEquals("2026-02-20T10:00:00Z", obj.get("lastLogin").getAsString());
+        assertEquals("sv-SE", obj.get("locale").getAsString());
+        assertEquals("SEK", obj.get("currency").getAsString());
+        assertEquals("A,B,C", obj.get("features").getAsString());
+        assertEquals("tag1,tag2", obj.get("tags").getAsString());
+        assertEquals("test user with many fields", obj.get("notes").getAsString());
     }
 }

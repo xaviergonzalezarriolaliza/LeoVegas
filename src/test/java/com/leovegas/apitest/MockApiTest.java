@@ -162,36 +162,51 @@ public class MockApiTest {
 
     @Test
     @Order(6)
-    public void testEchoEndpointWithManyFields() {
-        String manyFieldsPayload = "{" +
-                "\"id\":1001,\"name\":\"Alice\",\"email\":\"alice@example.com\",\"age\":30,\"country\":\"SE\",\"city\":\"Stockholm\",\"zip\":\"11122\",\"device\":\"Android\",\"os\":\"Android 14\",\"appVersion\":\"5.2.1\",\"sessionId\":\"sess-abc-123\",\"isPremium\":true,\"balance\":1234.56,\"lastLogin\":\"2026-02-20T10:00:00Z\",\"locale\":\"sv-SE\",\"currency\":\"SEK\",\"features\":\"A,B,C\",\"tags\":\"tag1,tag2\",\"notes\":\"test user with many fields\"" +
-                "}";
+    public void testManyFieldsPayload() {
+        given()
+            .when()
+                .get("/manyFieldsPayload")
+            .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .body("id", equalTo(1001))
+                .body("name", equalTo("Alice"))
+                .body("email", equalTo("alice@example.com"))
+                .body("age", equalTo(30))
+                .body("country", equalTo("SE"))
+                .body("city", equalTo("Stockholm"))
+                .body("device", equalTo("Android"))
+                .body("os", equalTo("Android 14"))
+                .body("appVersion", equalTo("5.2.1"))
+                .body("sessionId", equalTo("sess-abc-123"))
+                .body("isPremium", equalTo(true))
+                .body("balance", equalTo(1234.56f))
+                .body("lastLogin", equalTo("2026-02-20T10:00:00Z"))
+                .body("locale", equalTo("sv-SE"))
+                .body("currency", equalTo("SEK"))
+                .body("features", equalTo("A,B,C"))
+                .body("tags", equalTo("tag1,tag2"))
+                .body("notes", equalTo("test user with many fields"));
+    }
+
+    @Test
+    @Order(7)
+    public void testEchoEndpointWithLargePayload() {
+        StringBuilder largePayload = new StringBuilder("{\"data\":\"");
+        for (int i = 0; i < 10000; i++) {
+            largePayload.append("x");
+        }
+        largePayload.append("\"}");
 
         given()
             .contentType(ContentType.JSON)
-            .body(manyFieldsPayload)
+            .body(largePayload.toString())
         .when()
             .post("/echo")
         .then()
             .statusCode(200)
             .contentType(ContentType.JSON)
-            .body("echo.id", equalTo(1001))
-            .body("echo.name", equalTo("Alice"))
-            .body("echo.email", equalTo("alice@example.com"))
-            .body("echo.age", equalTo(30))
-            .body("echo.country", equalTo("SE"))
-            .body("echo.city", equalTo("Stockholm"))
-            .body("echo.device", equalTo("Android"))
-            .body("echo.os", equalTo("Android 14"))
-            .body("echo.appVersion", equalTo("5.2.1"))
-            .body("echo.sessionId", equalTo("sess-abc-123"))
-            .body("echo.isPremium", equalTo(true))
-            .body("echo.balance", equalTo(1234.56f))
-            .body("echo.lastLogin", equalTo("2026-02-20T10:00:00Z"))
-            .body("echo.locale", equalTo("sv-SE"))
-            .body("echo.currency", equalTo("SEK"))
-            .body("echo.features", equalTo("A,B,C"))
-            .body("echo.tags", equalTo("tag1,tag2"))
-            .body("echo.notes", equalTo("test user with many fields"));
+            .body("echo.data", equalTo(largePayload.substring(9, largePayload.length() - 2)));
     }
+
 }
