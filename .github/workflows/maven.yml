@@ -102,37 +102,6 @@ jobs:
       with:
         name: junit-report
         path: target/site/
-    - name: Install Allure CLI
-      if: always()
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget unzip
-        ALLURE_VERSION=2.22.0
-        wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.zip
-        unzip allure-${ALLURE_VERSION}.zip -d /opt/
-        echo "/opt/allure-${ALLURE_VERSION}/bin" >> $GITHUB_PATH
-    - name: Generate Allure report
-      if: always()
-      run: |
-        if [ -d "allure-results" ]; then
-          allure generate allure-results -o allure-report --clean || true
-        else
-          echo "No allure-results directory found; attempting common locations"
-          if [ -d "target/allure-results" ]; then
-            allure generate target/allure-results -o allure-report --clean || true
-          else
-            echo "No results found; creating placeholder report"
-            mkdir -p allure-report
-            echo "<html><body><h1>No Allure results found</h1></body></html>" > allure-report/index.html
-          fi
-        fi
-    - name: Upload Allure report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: allure-report
-        path: allure-report/
-    # Allure report generation and upload removed
     - name: Stop Mock API Server
       if: always()
       run: |

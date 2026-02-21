@@ -49,14 +49,6 @@
             <version>${playwright.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Allure JUnit 5 adapter -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
-            <version>2.21.0</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- Allure JUnit 5 adapter (use version compatible with CLI/plugin) -->
         
     </dependencies>
     <build>
@@ -83,11 +75,7 @@
                 <version>3.1.2</version>
             </plugin>
             <!-- Allure Maven plugin (optional - CLI-based generation used in CI) -->
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>2.11.2</version>
-            </plugin>
+            
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -96,7 +84,7 @@
                     <mainClass>com.leovegas.mockapi.MockApiServer</mainClass>
                 </configuration>
             </plugin>
-            <!-- Allure Maven plugin removed -->
+            
         </plugins>
     </build>
 </project>
