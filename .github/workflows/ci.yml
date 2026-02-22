@@ -71,7 +71,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: restassured-surefire-reports
+        name: restassured-surefire-reports-${{ github.run_id }}
         path: target/surefire-reports/
     - name: Generate Surefire HTML report (restassured)
       if: ${{ always() }}
@@ -82,7 +82,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: restassured-html-report
+        name: restassured-html-report-${{ github.run_id }}
         path: target/site/surefire-report.html
 
   Cypress:
@@ -157,7 +157,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: cypress-html-report
+        name: cypress-html-report-${{ github.run_id }}-${{ matrix.browser }}
         path: cypress/results/html/
     - name: Collect nohup and stop server
       if: ${{ always() }}
@@ -173,7 +173,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: surefire-reports
+        name: surefire-reports-${{ github.run_id }}
         path: target/surefire-reports/
     - name: Generate Surefire HTML report (repo generator)
       if: ${{ always() }}
@@ -184,7 +184,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: junit-report
+        name: junit-report-${{ github.run_id }}
         path: target/site/
     - name: Stop Mock API Server
       if: ${{ always() }}
@@ -252,7 +252,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: playwright-surefire-reports
+        name: playwright-surefire-reports-${{ github.run_id }}-${{ matrix.browser }}
         path: target/surefire-reports/
     - name: Generate Surefire HTML report (playwright)
       if: ${{ always() }}
@@ -263,7 +263,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: playwright-html-report
+        name: playwright-html-report-${{ github.run_id }}-${{ matrix.browser }}
         path: target/site/surefire-report.html
     - name: Stop Mock API Server (cleanup)
       if: ${{ always() }}
