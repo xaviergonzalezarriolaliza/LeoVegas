@@ -25,6 +25,8 @@ jobs:
   restassured:
     name: RestAssured
     runs-on: ubuntu-latest
+    env:
+      MAVEN_OPTS: '-Xmx1536m -XX:MaxMetaspaceSize=256m'
 
     steps:
     - uses: actions/checkout@v4
@@ -83,6 +85,8 @@ jobs:
   Cypress:
     needs: restassured
     runs-on: ubuntu-latest
+    env:
+      MAVEN_OPTS: '-Xmx1536m -XX:MaxMetaspaceSize=256m'
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -190,6 +194,8 @@ jobs:
   Playwright:
     needs: Cypress
     runs-on: ubuntu-latest
+    env:
+      MAVEN_OPTS: '-Xmx1536m -XX:MaxMetaspaceSize=256m'
     strategy:
       fail-fast: false
       matrix:
