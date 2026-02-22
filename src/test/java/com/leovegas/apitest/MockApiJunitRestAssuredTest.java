@@ -12,6 +12,7 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@org.junit.jupiter.api.extension.ExtendWith(TestLogger.class)
 public class MockApiJunitRestAssuredTest {
 
     @BeforeAll
