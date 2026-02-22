@@ -30,18 +30,28 @@ describe('Mock API - Cypress reproduction of MockApiTest', () => {
   })
 
   it('testEchoEndpoint', () => {
-    const payload = { id: 123, device: 'iPhone', os: 'iOS 17', foo: 'bar' }
-    cy.api({ url: `${base}/echo`, method: 'POST', body: payload, headers: { 'content-type': 'application/json' } }).then((res) => {
-      expect(res.status).to.equal(200)
-      expect(res.headers['content-type']).to.include('application/json')
-      expect(res.body).to.have.nested.property('echo.id', 123)
-      expect(res.body).to.have.nested.property('echo.device', 'iPhone')
-      expect(res.body).to.have.nested.property('echo.os', 'iOS 17')
-      expect(res.body).to.have.nested.property('echo.foo', 'bar')
-    })
+    // Use a sample payload from the mock server so tests mirror real cases
+    cy.api(`${base}/manyFieldsPayload`).then((sample) => {
+      expect(sample.status).to.equal(200)
+      const payload = {
+        id: sample.body.id || 123,
+        device: sample.body.device || 'iPhone',
+        os: sample.body.os || 'iOS 17',
+        foo: 'bar'
+      }
 
-    cy.api({ url: `${base}/echo`, method: 'GET', failOnStatusCode: false }).then((res) => {
-      expect([404, 405]).to.include(res.status)
+      cy.api({ url: `${base}/echo`, method: 'POST', body: payload, headers: { 'content-type': 'application/json' } }).then((res) => {
+        expect(res.status).to.equal(200)
+        expect(res.headers['content-type']).to.include('application/json')
+        expect(res.body).to.have.nested.property('echo.id', payload.id)
+        expect(res.body).to.have.nested.property('echo.device', payload.device)
+        expect(res.body).to.have.nested.property('echo.os', payload.os)
+        expect(res.body).to.have.nested.property('echo.foo', 'bar')
+      })
+
+      cy.api({ url: `${base}/echo`, method: 'GET', failOnStatusCode: false }).then((res) => {
+        expect([404, 405]).to.include(res.status)
+      })
     })
   })
 
@@ -74,18 +84,21 @@ describe('Mock API - Cypress reproduction of MockApiTest', () => {
       expect(res.body).to.have.property('echo', '')
     })
 
-    // invalid payload
-    cy.api({ url: `${base}/echo`, method: 'POST', body: 'not-a-json', headers: { 'content-type': 'application/json' } }).then((res) => {
-      expect(res.status).to.equal(200)
-      expect(res.body).to.have.property('echo', 'not-a-json')
-    })
+    // derive invalid and partial payloads from the sample
+    cy.api(`${base}/manyFieldsPayload`).then((sample) => {
+      const sampleJson = JSON.stringify(sample.body || {})
+      const invalid = sampleJson.substring(0, Math.max(1, sampleJson.length - 1))
+      cy.api({ url: `${base}/echo`, method: 'POST', body: invalid, headers: { 'content-type': 'application/json' } }).then((res) => {
+        expect(res.status).to.equal(200)
+        expect(res.body).to.have.property('echo', invalid)
+      })
 
-    // partial json
-    const partial = { id: 456, device: 'Android' }
-    cy.api({ url: `${base}/echo`, method: 'POST', body: partial, headers: { 'content-type': 'application/json' } }).then((res) => {
-      expect(res.status).to.equal(200)
-      expect(res.body).to.have.nested.property('echo.id', 456)
-      expect(res.body).to.have.nested.property('echo.device', 'Android')
+      const partial = { id: sample.body.id, device: sample.body.device }
+      cy.api({ url: `${base}/echo`, method: 'POST', body: partial, headers: { 'content-type': 'application/json' } }).then((res) => {
+        expect(res.status).to.equal(200)
+        expect(res.body).to.have.nested.property('echo.id', partial.id)
+        expect(res.body).to.have.nested.property('echo.device', partial.device)
+      })
     })
 
     // PUT not allowed
@@ -106,13 +119,16 @@ describe('Mock API - Cypress reproduction of MockApiTest', () => {
   })
 
   it('testEchoEndpointWithLargePayload', () => {
-    const large = 'x'.repeat(10000)
-    const body = { data: large }
-    cy.api({ url: `${base}/echo`, method: 'POST', body: body, headers: { 'content-type': 'application/json' } }).then((res) => {
-      expect(res.status).to.equal(200)
-      expect(res.headers['content-type']).to.include('application/json')
-      // server echoes parsed JSON under echo; echo.data should equal the large string
-      expect(res.body).to.have.nested.property('echo.data', large)
+    // Build a large payload based on the server-provided sample notes field
+    cy.api(`${base}/manyFieldsPayload`).then((sample) => {
+      const baseNotes = (sample.body && sample.body.notes) || 'x'
+      let large = baseNotes.repeat(Math.ceil(10000 / baseNotes.length)).substring(0, 10000)
+      const body = { data: large }
+      cy.api({ url: `${base}/echo`, method: 'POST', body: body, headers: { 'content-type': 'application/json' } }).then((res) => {
+        expect(res.status).to.equal(200)
+        expect(res.headers['content-type']).to.include('application/json')
+        expect(res.body).to.have.nested.property('echo.data', large)
+      })
     })
   })
 })

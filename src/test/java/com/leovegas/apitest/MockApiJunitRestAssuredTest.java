@@ -141,8 +141,20 @@ public class MockApiJunitRestAssuredTest {
             .statusCode(200)
             .body("echo", equalTo(""));
 
-        // invalid payload
-        String invalidPayload = "not-a-json";
+        // Obtain a representative payload from the mock server and derive invalid/partial payloads from it
+        var sampleResp =
+            given()
+            .when()
+                .get("/manyFieldsPayload")
+            .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .extract()
+                .response();
+
+        String sampleJson = sampleResp.asString();
+        // invalid payload: take the sample and corrupt it by truncating the final char
+        String invalidPayload = sampleJson.substring(0, Math.max(1, sampleJson.length() - 1));
         given()
             .contentType(ContentType.JSON)
             .body(invalidPayload)
@@ -152,8 +164,10 @@ public class MockApiJunitRestAssuredTest {
             .statusCode(200)
             .body("echo", equalTo(invalidPayload));
 
-        // partial json
-        String partialPayload = "{\"id\":456,\"device\":\"Android\"}";
+        // partial json: use two fields from the sample payload dynamically
+        int partialId = sampleResp.jsonPath().getInt("id");
+        String partialDevice = sampleResp.jsonPath().getString("device");
+        String partialPayload = String.format("{\"id\":%d,\"device\":\"%s\"}", partialId, partialDevice);
         given()
             .contentType(ContentType.JSON)
             .body(partialPayload)
@@ -161,8 +175,8 @@ public class MockApiJunitRestAssuredTest {
             .post("/echo")
         .then()
             .statusCode(200)
-            .body("echo.id", equalTo(456))
-            .body("echo.device", equalTo("Android"));
+            .body("echo.id", equalTo(partialId))
+            .body("echo.device", equalTo(partialDevice));
 
         // PUT not allowed
         given()
@@ -206,21 +220,35 @@ public class MockApiJunitRestAssuredTest {
     @Test
     @Order(7)
     public void testEchoEndpointWithLargePayload_jUnit() {
-        StringBuilder largePayload = new StringBuilder("{\"data\":\"");
-        for (int i = 0; i < 10000; i++) {
-            largePayload.append("x");
+        // Build a large payload by repeating a string value obtained from the mock server
+        var sampleResp =
+            given()
+            .when()
+                .get("/manyFieldsPayload")
+            .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .extract()
+                .response();
+
+        String base = sampleResp.jsonPath().getString("notes");
+        if (base == null) base = "x";
+        StringBuilder sb = new StringBuilder();
+        while (sb.length() < 10000) {
+            sb.append(base);
         }
-        largePayload.append("\"}");
+        String largeData = sb.substring(0, 10000);
+        String largePayload = String.format("{\"data\":\"%s\"}", largeData);
 
         given()
             .contentType(ContentType.JSON)
-            .body(largePayload.toString())
+            .body(largePayload)
         .when()
             .post("/echo")
         .then()
             .statusCode(200)
             .contentType(ContentType.JSON)
-            .body("echo.data", equalTo(largePayload.substring(9, largePayload.length() - 2)));
+            .body("echo.data", equalTo(largeData));
     }
 
 }

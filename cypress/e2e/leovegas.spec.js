@@ -72,7 +72,7 @@ describe('Leovegas big generated suite', () => {
   it('leovegas #5 - navigate first prominent link and back', () => {
     const url = 'https://www.leovegas.es/'
     cy.visit(url, { timeout: 30000 })
-    // use direct DOM lookup so absence is handled gracefully
+    // use direct DOM lookup
     cy.document().then(doc => {
       const links = Array.from(doc.querySelectorAll('nav a, header a'))
       if (!links || links.length === 0) { cy.log('no nav links found'); return }
