@@ -269,7 +269,8 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: playwright-report-${{ github.run_id }}-${{ matrix.browser }}
+        # Include device or channel to make artifact names unique per matrix job
+        name: playwright-report-${{ github.run_id }}-${{ matrix.browser }}-${{ matrix.device || matrix.channel || 'default' }}
         path: report-artifacts/playwright/
     - name: Stop Mock API Server (cleanup)
       if: ${{ always() }}
