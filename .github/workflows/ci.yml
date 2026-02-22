@@ -147,3 +147,61 @@ jobs:
       if: always()
       run: |
         pkill -f 'com.leovegas.mockapi.MockApiServer' || true
+
+  playwright:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Set up Node.js for Playwright
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.18.0'
+    - name: Install Playwright system dependencies and browsers
+      if: runner.os == 'Linux'
+      run: |
+        npx playwright@latest install --with-deps
+      shell: bash
+    - name: Build with Maven (for Playwright tests)
+      run: mvn -B package --file pom.xml
+    - name: Copy dependencies
+      run: mvn dependency:copy-dependencies -DincludeScope=runtime
+    - name: Start Mock API Server for Playwright
+      run: |
+        nohup java -cp "target/classes:target/dependency/*" com.leovegas.mockapi.MockApiServer > nohup.out 2>&1 &
+        SERVER_PID=$!
+        for i in {1..40}; do
+          if curl --fail http://localhost:4567/hello; then
+            echo 'Mock API Server is up!';
+            break;
+          fi;
+          echo 'Waiting for Mock API Server...';
+          sleep 2;
+        done
+        if ! curl --fail http://localhost:4567/hello; then
+          echo "Server did not start in time" >&2
+          tail -n 100 nohup.out || echo "nohup.out not found"
+          exit 1
+        fi
+        echo "Mock API Server ready (PID $SERVER_PID)" > server.pid
+        echo $SERVER_PID
+    - name: Run Playwright Java tests
+      run: |
+        mvn -Dtest=com.leovegas.apitest.PlaywrightMockApiTest test || TEST_RESULT=$?
+        echo "Stopping Mock API Server (PID $SERVER_PID)"
+        kill $SERVER_PID || true
+        exit ${TEST_RESULT:-0}
+    - name: Archive Playwright surefire report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-surefire-reports
+        path: target/surefire-reports/
+    - name: Stop Mock API Server (cleanup)
+      if: always()
+      run: |
+        pkill -f 'com.leovegas.mockapi.MockApiServer' || true
