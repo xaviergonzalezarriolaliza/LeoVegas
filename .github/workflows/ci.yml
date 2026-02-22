@@ -67,23 +67,18 @@ jobs:
         echo "Stopping Mock API Server (PID $SERVER_PID)"
         kill $SERVER_PID || true
         exit ${TEST_RESULT:-0}
-    - name: Archive surefire reports
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: restassured-surefire-reports-${{ github.run_id }}
-        path: target/surefire-reports/
-    - name: Generate Surefire HTML report (restassured)
+    - name: Collect RestAssured reports
       if: ${{ always() }}
       run: |
-        python3 --version || true
-        python3 scripts/generate_surefire_html.py || python scripts/generate_surefire_html.py || true
-    - name: Upload RestAssured HTML report
+        mkdir -p report-artifacts/restassured || true
+        if [ -d target/surefire-reports ]; then cp -r target/surefire-reports report-artifacts/restassured/ || true; fi
+        if [ -f target/site/surefire-report.html ]; then cp target/site/surefire-report.html report-artifacts/restassured/ || true; fi
+    - name: Upload RestAssured report
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: restassured-html-report-${{ github.run_id }}
-        path: target/site/surefire-report.html
+        name: restassured-report-${{ github.run_id }}
+        path: report-artifacts/restassured/
 
   Cypress:
     needs: restassured
@@ -153,12 +148,18 @@ jobs:
         if [ ! -d cypress/results/html ]; then
           python3 scripts/generate_mochawesome_html.py || python scripts/generate_mochawesome_html.py || true
         fi
-    - name: Upload Cypress HTML report
+    - name: Collect Cypress reports
+      if: ${{ always() }}
+      run: |
+        mkdir -p report-artifacts/cypress || true
+        if [ -d cypress/results/html ]; then cp -r cypress/results/html report-artifacts/cypress/ || true; fi
+        if [ -f cypress/results/mochawesome.json ]; then cp cypress/results/mochawesome.json report-artifacts/cypress/ || true; fi
+    - name: Upload Cypress report
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: cypress-html-report-${{ github.run_id }}-${{ matrix.browser }}
-        path: cypress/results/html/
+        name: cypress-report-${{ github.run_id }}
+        path: report-artifacts/cypress/
     - name: Collect nohup and stop server
       if: ${{ always() }}
       run: |
@@ -169,23 +170,18 @@ jobs:
         else
           pkill -f 'com.leovegas.mockapi.MockApiServer' || true
         fi
-    - name: Archive test reports
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: surefire-reports-${{ github.run_id }}
-        path: target/surefire-reports/
-    - name: Generate Surefire HTML report (repo generator)
+    - name: Collect additional test reports
       if: ${{ always() }}
       run: |
-        python3 --version || true
-        python3 scripts/generate_surefire_html.py || python scripts/generate_surefire_html.py || true
-    - name: Upload Surefire HTML report
+        mkdir -p report-artifacts/additional || true
+        if [ -d target/surefire-reports ]; then cp -r target/surefire-reports report-artifacts/additional/ || true; fi
+        if [ -f target/site/surefire-report.html ]; then cp target/site/surefire-report.html report-artifacts/additional/ || true; fi
+    - name: Upload additional test reports
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: junit-report-${{ github.run_id }}
-        path: target/site/
+        name: additional-reports-${{ github.run_id }}
+        path: report-artifacts/additional/
     - name: Stop Mock API Server
       if: ${{ always() }}
       run: |
@@ -248,23 +244,18 @@ jobs:
         echo "Stopping Mock API Server (PID $SERVER_PID)"
         kill $SERVER_PID || true
         exit ${TEST_RESULT:-0}
-    - name: Archive Playwright surefire report
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright-surefire-reports-${{ github.run_id }}-${{ matrix.browser }}
-        path: target/surefire-reports/
-    - name: Generate Surefire HTML report (playwright)
+    - name: Collect Playwright reports
       if: ${{ always() }}
       run: |
-        python3 --version || true
-        python3 scripts/generate_surefire_html.py || python scripts/generate_surefire_html.py || true
-    - name: Upload Playwright HTML report
+        mkdir -p report-artifacts/playwright || true
+        if [ -d target/surefire-reports ]; then cp -r target/surefire-reports report-artifacts/playwright/ || true; fi
+        if [ -f target/site/surefire-report.html ]; then cp target/site/surefire-report.html report-artifacts/playwright/ || true; fi
+    - name: Upload Playwright report
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: playwright-html-report-${{ github.run_id }}-${{ matrix.browser }}
-        path: target/site/surefire-report.html
+        name: playwright-report-${{ github.run_id }}-${{ matrix.browser }}
+        path: report-artifacts/playwright/
     - name: Stop Mock API Server (cleanup)
       if: ${{ always() }}
       run: |
