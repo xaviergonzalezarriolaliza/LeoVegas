@@ -22,7 +22,8 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  build:
+  restassured:
+    name: RestAssured
     runs-on: ubuntu-latest
 
     steps:
