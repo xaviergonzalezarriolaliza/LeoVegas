@@ -113,13 +113,21 @@ public class PlaywrightMockApiTest {
     @Test
     @Order(2)
     public void testEchoEndpoint() throws Exception {
-        String payload = "{\"id\":123,\"device\":\"iPhone\",\"os\":\"iOS 17\",\"foo\":\"bar\"}";
+        // Use a representative payload from the mock server
+        HttpResponse<String> sampleResp = get("/manyFieldsPayload");
+        assertEquals(200, sampleResp.statusCode());
+        Gson g = new Gson();
+        JsonObject sample = g.fromJson(sampleResp.body(), JsonObject.class);
+        int idVal = sample.has("id") ? sample.get("id").getAsInt() : 123;
+        String deviceVal = sample.has("device") ? sample.get("device").getAsString() : "iPhone";
+        String osVal = sample.has("os") ? sample.get("os").getAsString() : "iOS 17";
+        String payload = String.format("{\"id\":%d,\"device\":\"%s\",\"os\":\"%s\",\"foo\":\"bar\"}", idVal, deviceVal, osVal);
         HttpResponse<String> resp = post("/echo", payload);
         assertEquals(200, resp.statusCode());
         String echoed = extractEcho(resp);
-        assertTrue(echoed.contains("\"id\":123"));
-        assertTrue(echoed.contains("\"device\":\"iPhone\""));
-        assertTrue(echoed.contains("\"os\":\"iOS 17\""));
+        assertTrue(echoed.contains("\"id\":" + idVal));
+        assertTrue(echoed.contains("\"device\":\"" + deviceVal + "\""));
+        assertTrue(echoed.contains("\"os\":\"" + osVal + "\""));
         assertTrue(echoed.contains("\"foo\":\"bar\""));
 
         HttpResponse<String> getResp = get("/echo");
@@ -157,24 +165,39 @@ public class PlaywrightMockApiTest {
         assertEquals(200, empty.statusCode());
         String echoedEmpty = extractEcho(empty);
         assertEquals("", echoedEmpty);
-
-        HttpResponse<String> invalid = post("/echo", "not-a-json");
+        // derive invalid and partial payloads from the server-provided sample
+        HttpResponse<String> sampleResp = get("/manyFieldsPayload");
+        assertEquals(200, sampleResp.statusCode());
+        Gson g = new Gson();
+        String sampleJson = sampleResp.body();
+        String invalidPayload = sampleJson.substring(0, Math.max(1, sampleJson.length() - 1));
+        HttpResponse<String> invalid = post("/echo", invalidPayload);
         assertEquals(200, invalid.statusCode());
         String echoedInvalid = extractEcho(invalid);
-        assertTrue(echoedInvalid.contains("not-a-json"));
+        assertTrue(echoedInvalid.contains(invalidPayload));
 
-        String partial = "{\"id\":456,\"device\":\"Android\"}";
+        JsonObject sample = g.fromJson(sampleJson, JsonObject.class);
+        int partialId = sample.has("id") ? sample.get("id").getAsInt() : 456;
+        String partialDevice = sample.has("device") ? sample.get("device").getAsString() : "Android";
+        String partial = String.format("{\"id\":%d,\"device\":\"%s\"}", partialId, partialDevice);
         HttpResponse<String> partialResp = post("/echo", partial);
         assertEquals(200, partialResp.statusCode());
         String echoedPartial = extractEcho(partialResp);
-        assertTrue(echoedPartial.contains("\"id\":456"));
-        assertTrue(echoedPartial.contains("\"device\":\"Android\""));
+        assertTrue(echoedPartial.contains("\"id\":" + partialId));
+        assertTrue(echoedPartial.contains("\"device\":\"" + partialDevice + "\""));
 
+        // PUT not allowed - construct payload using server sample for realism
+        HttpResponse<String> sampleForPut = get("/manyFieldsPayload");
+        assertEquals(200, sampleForPut.statusCode());
+        JsonObject s = g.fromJson(sampleForPut.body(), JsonObject.class);
+        int putId = s.has("id") ? s.get("id").getAsInt() : 0;
+        String putDevice = s.has("device") ? s.get("device").getAsString() : "unknown";
+        String putBody = String.format("{\"id\":%d,\"device\":\"%s\",\"foo\":\"bar\"}", putId, putDevice);
         HttpRequest putReq = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "/echo"))
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString("{\"foo\":\"bar\"}"))
-                .build();
+            .uri(URI.create(baseUrl + "/echo"))
+            .header("Content-Type", "application/json")
+            .PUT(HttpRequest.BodyPublishers.ofString(putBody))
+            .build();
         HttpResponse<String> putResp = client.send(putReq, HttpResponse.BodyHandlers.ofString());
         int code = putResp.statusCode();
         assertTrue(code == 404 || code == 405);

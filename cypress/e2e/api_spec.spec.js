@@ -101,9 +101,12 @@ describe('Mock API - Cypress reproduction of MockApiTest', () => {
       })
     })
 
-    // PUT not allowed
-    cy.api({ url: `${base}/echo`, method: 'PUT', body: { foo: 'bar' }, failOnStatusCode: false }).then((res) => {
-      expect([404, 405]).to.include(res.status)
+    // PUT not allowed - derive a realistic payload from server sample
+    cy.api(`${base}/manyFieldsPayload`).then((sampleForPut) => {
+      const putPayload = { foo: 'bar', id: sampleForPut.body && sampleForPut.body.id, device: sampleForPut.body && sampleForPut.body.device }
+      cy.api({ url: `${base}/echo`, method: 'PUT', body: putPayload, failOnStatusCode: false }).then((res) => {
+        expect([404, 405]).to.include(res.status)
+      })
     })
   })
 

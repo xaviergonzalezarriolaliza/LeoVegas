@@ -1,2 +1,6 @@
 # Ignore bundled Allure CLI
 .allure/
+
+# Node modules
+node_modules/
+

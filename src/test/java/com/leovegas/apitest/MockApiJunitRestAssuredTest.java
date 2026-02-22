@@ -179,9 +179,24 @@ public class MockApiJunitRestAssuredTest {
             .body("echo.device", equalTo(partialDevice));
 
         // PUT not allowed
+        // PUT not allowed - build payload from server sample to keep tests realistic
+        var sampleForPut =
+            given()
+            .when()
+                .get("/manyFieldsPayload")
+            .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .extract()
+                .response();
+
+        int putId = sampleForPut.jsonPath().getInt("id");
+        String putDevice = sampleForPut.jsonPath().getString("device");
+        String putPayload = String.format("{\"id\":%d,\"device\":\"%s\",\"foo\":\"bar\"}", putId, putDevice);
+
         given()
             .contentType(ContentType.JSON)
-            .body("{\"foo\":\"bar\"}")
+            .body(putPayload)
         .when()
             .put("/echo")
         .then()
