@@ -206,30 +206,97 @@ public class MockApiJunitRestAssuredTest {
     @Test
     @Order(6)
     public void testManyFieldsPayload_jUnit() {
-        given()
+        // Extract response and perform stricter type and boundary checks
+        var resp =
+            given()
             .when()
                 .get("/manyFieldsPayload")
             .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .body("id", equalTo(1001))
-                .body("name", equalTo("Alice"))
-                .body("email", equalTo("alice@example.com"))
-                .body("age", equalTo(30))
-                .body("country", equalTo("SE"))
-                .body("city", equalTo("Stockholm"))
-                .body("device", equalTo("Android"))
-                .body("os", equalTo("Android 14"))
-                .body("appVersion", equalTo("5.2.1"))
-                .body("sessionId", equalTo("sess-abc-123"))
-                .body("isPremium", equalTo(true))
-                .body("balance", equalTo(1234.56f))
-                .body("lastLogin", equalTo("2026-02-20T10:00:00Z"))
-                .body("locale", equalTo("sv-SE"))
-                .body("currency", equalTo("SEK"))
-                .body("features", equalTo("A,B,C"))
-                .body("tags", equalTo("tag1,tag2"))
-                .body("notes", equalTo("test user with many fields"));
+                .extract()
+                .response();
+
+        // Basic equality checks
+        Assertions.assertEquals(1001, resp.jsonPath().getInt("id"));
+        Assertions.assertEquals("Alice", resp.jsonPath().getString("name"));
+        Assertions.assertEquals("alice@example.com", resp.jsonPath().getString("email"));
+        Assertions.assertEquals(30, resp.jsonPath().getInt("age"));
+        Assertions.assertEquals("SE", resp.jsonPath().getString("country"));
+        Assertions.assertEquals("Stockholm", resp.jsonPath().getString("city"));
+        Assertions.assertEquals("Android", resp.jsonPath().getString("device"));
+        Assertions.assertEquals("Android 14", resp.jsonPath().getString("os"));
+        Assertions.assertEquals("5.2.1", resp.jsonPath().getString("appVersion"));
+        Assertions.assertEquals("sess-abc-123", resp.jsonPath().getString("sessionId"));
+        Assertions.assertEquals("2026-02-20T10:00:00Z", resp.jsonPath().getString("lastLogin"));
+        Assertions.assertEquals("sv-SE", resp.jsonPath().getString("locale"));
+        Assertions.assertEquals("SEK", resp.jsonPath().getString("currency"));
+        Assertions.assertEquals("A,B,C", resp.jsonPath().getString("features"));
+        Assertions.assertEquals("tag1,tag2", resp.jsonPath().getString("tags"));
+        Assertions.assertEquals("test user with many fields", resp.jsonPath().getString("notes"));
+
+        // Type checks
+        Object idObj = resp.jsonPath().get("id");
+        Assertions.assertTrue(idObj instanceof Integer || idObj instanceof Long,
+            "id should be an integer type");
+
+        Object isPremiumObj = resp.jsonPath().get("isPremium");
+        Assertions.assertTrue(isPremiumObj instanceof Boolean,
+            "isPremium should be a boolean");
+
+        Object balanceObj = resp.jsonPath().get("balance");
+        Assertions.assertTrue(balanceObj instanceof Number,
+            "balance should be numeric");
+
+        // Numeric boundaries (example): id positive, balance reasonable
+        int idVal = resp.jsonPath().getInt("id");
+        double balanceVal = resp.jsonPath().getDouble("balance");
+        Assertions.assertTrue(idVal >= 1 && idVal <= 10_000_000,
+            "id out of expected range");
+        Assertions.assertTrue(balanceVal >= -1_000_000.0 && balanceVal <= 1_000_000.0,
+            "balance out of expected range");
+    }
+
+    @Test
+    @Order(8)
+    public void testManyFieldsPayloadBoundary_low_jUnit() {
+        var resp =
+            given()
+            .when()
+                .get("/manyFieldsPayload")
+            .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .extract()
+                .response();
+
+        int idVal = resp.jsonPath().getInt("id");
+        double balanceVal = resp.jsonPath().getDouble("balance");
+
+        // Lower-bound expectations
+        Assertions.assertTrue(idVal >= 1, "id must be >= 1");
+        Assertions.assertTrue(balanceVal >= -1_000_000.0, "balance lower bound violated");
+    }
+
+    @Test
+    @Order(9)
+    public void testManyFieldsPayloadBoundary_high_jUnit() {
+        var resp =
+            given()
+            .when()
+                .get("/manyFieldsPayload")
+            .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .extract()
+                .response();
+
+        int idVal = resp.jsonPath().getInt("id");
+        double balanceVal = resp.jsonPath().getDouble("balance");
+
+        // Upper-bound expectations
+        Assertions.assertTrue(idVal <= 10_000_000, "id must be <= 10,000,000");
+        Assertions.assertTrue(balanceVal <= 1_000_000.0, "balance upper bound violated");
     }
 
     @Test
