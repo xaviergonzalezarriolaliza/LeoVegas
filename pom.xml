@@ -68,6 +68,12 @@
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <!-- Print test output directly to console in CI (spec-style) -->
                     <useFile>false</useFile>
+                    <!-- Reduce parallel fork usage and increase fork timeout to avoid
+                         spurious EOF stream errors when test JVMs are under
+                         memory pressure on CI runners. -->
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
                     <printSummary>true</printSummary>
                     <trimStackTrace>false</trimStackTrace>
                     <includes>
