@@ -1,0 +1,105 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-02-22T18:40:16.262Z",
+    "end": "2026-02-22T18:40:23.483Z",
+    "duration": 7221,
+    "testsRegistered": 1,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "f640047e-6c96-4b2c-ae09-482248e10d3a",
+      "title": "",
+      "fullFile": "cypress\\e2e\\sample_0001.spec.js",
+      "file": "cypress\\e2e\\sample_0001.spec.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "e51006cb-e7a9-4abb-881e-f8cda5f29af3",
+          "title": "Sample auto test 1",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "visits homepage and checks elements",
+              "fullTitle": "Sample auto test 1 visits homepage and checks elements",
+              "timedOut": null,
+              "duration": 3780,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const url = 'https://www.leovegas.es/';\ncy.request({\n  url,\n  failOnStatusCode: false\n}).then(resp => {\n  expect([200, 301, 302, 403, 404]).to.include(resp.status);\n});\ncy.visit(url);\ncy.get('header').should('exist');\ncy.get('nav').its('length').should('be.gte', 0);\ncy.title().then(t => {\n  expect(t.length).to.be.at.least(0);\n});",
+              "err": {},
+              "uuid": "3ca892f8-dddc-4396-b293-b4669ff43291",
+              "parentUUID": "e51006cb-e7a9-4abb-881e-f8cda5f29af3",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "3ca892f8-dddc-4396-b293-b4669ff43291"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 3780,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/results",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

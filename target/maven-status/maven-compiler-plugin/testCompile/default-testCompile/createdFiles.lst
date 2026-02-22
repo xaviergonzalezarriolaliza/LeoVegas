@@ -1,0 +1,3 @@
+com\leovegas\apitest\TestLogger.class
+com\leovegas\apitest\PlaywrightMockApiTest.class
+com\leovegas\apitest\MockApiJunitRestAssuredTest.class

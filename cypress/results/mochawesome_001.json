@@ -1,0 +1,219 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 7,
+    "passes": 7,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-02-22T18:39:24.848Z",
+    "end": "2026-02-22T18:39:30.813Z",
+    "duration": 5965,
+    "testsRegistered": 7,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "9b9b78ed-83a1-4311-af76-3bab8c32aaf8",
+      "title": "",
+      "fullFile": "cypress\\e2e\\api_spec.spec.js",
+      "file": "cypress\\e2e\\api_spec.spec.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "0a9543ed-4bf0-43b3-97dd-22228494ff2a",
+          "title": "Mock API - Cypress reproduction of MockApiTest",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "testHelloEndpoint",
+              "fullTitle": "Mock API - Cypress reproduction of MockApiTest testHelloEndpoint",
+              "timedOut": null,
+              "duration": 260,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.api(`${base}/hello`).then(res => {\n  expect(res.status).to.equal(200);\n  expect(res.headers['content-type']).to.include('application/json');\n  expect(res.body).to.have.property('message', 'Hello, LeoVegas!');\n});\ncy.api({\n  url: `${base}/hello`,\n  method: 'POST',\n  failOnStatusCode: false\n}).then(res => {\n  expect([404, 405]).to.include(res.status);\n});",
+              "err": {},
+              "uuid": "113e65ee-7473-4f6c-8d09-a30a58305fa5",
+              "parentUUID": "0a9543ed-4bf0-43b3-97dd-22228494ff2a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "testEchoEndpoint",
+              "fullTitle": "Mock API - Cypress reproduction of MockApiTest testEchoEndpoint",
+              "timedOut": null,
+              "duration": 103,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Use a sample payload from the mock server so tests mirror real cases\ncy.api(`${base}/manyFieldsPayload`).then(sample => {\n  expect(sample.status).to.equal(200);\n  const payload = {\n    id: sample.body.id || 123,\n    device: sample.body.device || 'iPhone',\n    os: sample.body.os || 'iOS 17',\n    foo: 'bar'\n  };\n  cy.api({\n    url: `${base}/echo`,\n    method: 'POST',\n    body: payload,\n    headers: {\n      'content-type': 'application/json'\n    }\n  }).then(res => {\n    expect(res.status).to.equal(200);\n    expect(res.headers['content-type']).to.include('application/json');\n    expect(res.body).to.have.nested.property('echo.id', payload.id);\n    expect(res.body).to.have.nested.property('echo.device', payload.device);\n    expect(res.body).to.have.nested.property('echo.os', payload.os);\n    expect(res.body).to.have.nested.property('echo.foo', 'bar');\n  });\n  cy.api({\n    url: `${base}/echo`,\n    method: 'GET',\n    failOnStatusCode: false\n  }).then(res => {\n    expect([404, 405]).to.include(res.status);\n  });\n});",
+              "err": {},
+              "uuid": "9f317be9-2323-4515-a7f8-5b521aa661a5",
+              "parentUUID": "0a9543ed-4bf0-43b3-97dd-22228494ff2a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "testLongResponseTime",
+              "fullTitle": "Mock API - Cypress reproduction of MockApiTest testLongResponseTime",
+              "timedOut": null,
+              "duration": 5059,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.api({\n  url: `${base}/long`,\n  timeout: 20000\n}).then(res => {\n  expect(res.status).to.equal(200);\n  // record response time for debug (Cypress doesn't expose .time(), but request has duration in ms)\n  // we can at least assert body present\n  expect(res.body).to.have.property('message');\n});\ncy.api({\n  url: `${base}/long`,\n  method: 'POST',\n  failOnStatusCode: false\n}).then(res => {\n  expect([404, 405]).to.include(res.status);\n});",
+              "err": {},
+              "uuid": "9b4b0fb3-fa9c-439a-84e8-a5ce25382f95",
+              "parentUUID": "0a9543ed-4bf0-43b3-97dd-22228494ff2a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "testInvalidEndpoint",
+              "fullTitle": "Mock API - Cypress reproduction of MockApiTest testInvalidEndpoint",
+              "timedOut": null,
+              "duration": 56,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.api({\n  url: `${base}/notfound`,\n  failOnStatusCode: false\n}).then(res => {\n  expect(res.status).to.equal(404);\n});\ncy.api({\n  url: `${base}/notfound`,\n  method: 'POST',\n  failOnStatusCode: false\n}).then(res => {\n  expect(res.status).to.equal(404);\n});",
+              "err": {},
+              "uuid": "0ef64ef8-f170-4ab3-b688-92123bce74c6",
+              "parentUUID": "0a9543ed-4bf0-43b3-97dd-22228494ff2a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "testEchoEndpointWithMissingOrInvalidPayload",
+              "fullTitle": "Mock API - Cypress reproduction of MockApiTest testEchoEndpointWithMissingOrInvalidPayload",
+              "timedOut": null,
+              "duration": 141,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// empty body\ncy.api({\n  url: `${base}/echo`,\n  method: 'POST',\n  headers: {\n    'content-type': 'application/json'\n  },\n  body: '',\n  failOnStatusCode: false\n}).then(res => {\n  expect(res.status).to.equal(200);\n  expect(res.body).to.have.property('echo', '');\n});\n// derive invalid and partial payloads from the sample\ncy.api(`${base}/manyFieldsPayload`).then(sample => {\n  const sampleJson = JSON.stringify(sample.body || {});\n  const invalid = sampleJson.substring(0, Math.max(1, sampleJson.length - 1));\n  cy.api({\n    url: `${base}/echo`,\n    method: 'POST',\n    body: invalid,\n    headers: {\n      'content-type': 'application/json'\n    }\n  }).then(res => {\n    expect(res.status).to.equal(200);\n    expect(res.body).to.have.property('echo', invalid);\n  });\n  const partial = {\n    id: sample.body.id,\n    device: sample.body.device\n  };\n  cy.api({\n    url: `${base}/echo`,\n    method: 'POST',\n    body: partial,\n    headers: {\n      'content-type': 'application/json'\n    }\n  }).then(res => {\n    expect(res.status).to.equal(200);\n    expect(res.body).to.have.nested.property('echo.id', partial.id);\n    expect(res.body).to.have.nested.property('echo.device', partial.device);\n  });\n});\n// PUT not allowed - derive a realistic payload from server sample\ncy.api(`${base}/manyFieldsPayload`).then(sampleForPut => {\n  const putPayload = {\n    foo: 'bar',\n    id: sampleForPut.body && sampleForPut.body.id,\n    device: sampleForPut.body && sampleForPut.body.device\n  };\n  cy.api({\n    url: `${base}/echo`,\n    method: 'PUT',\n    body: putPayload,\n    failOnStatusCode: false\n  }).then(res => {\n    expect([404, 405]).to.include(res.status);\n  });\n});",
+              "err": {},
+              "uuid": "9b1dd6d1-1a66-4f4b-898a-5f78c65ccdfe",
+              "parentUUID": "0a9543ed-4bf0-43b3-97dd-22228494ff2a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "testManyFieldsPayload",
+              "fullTitle": "Mock API - Cypress reproduction of MockApiTest testManyFieldsPayload",
+              "timedOut": null,
+              "duration": 81,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.api(`${base}/manyFieldsPayload`).then(res => {\n  expect(res.status).to.equal(200);\n  expect(res.headers['content-type']).to.include('application/json');\n  expect(res.body).to.include({\n    id: 1001,\n    name: 'Alice',\n    email: 'alice@example.com',\n    age: 30,\n    country: 'SE',\n    city: 'Stockholm',\n    device: 'Android',\n    os: 'Android 14',\n    appVersion: '5.2.1',\n    sessionId: 'sess-abc-123',\n    isPremium: true,\n    locale: 'sv-SE',\n    currency: 'SEK',\n    features: 'A,B,C',\n    tags: 'tag1,tag2',\n    notes: 'test user with many fields'\n  });\n  // balance may be a number close to 1234.56\n  expect(res.body.balance).to.be.closeTo(1234.56, 0.01);\n  expect(res.body.lastLogin).to.equal('2026-02-20T10:00:00Z');\n});",
+              "err": {},
+              "uuid": "f1252b30-4b36-4129-8271-4c11bdba1f8c",
+              "parentUUID": "0a9543ed-4bf0-43b3-97dd-22228494ff2a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "testEchoEndpointWithLargePayload",
+              "fullTitle": "Mock API - Cypress reproduction of MockApiTest testEchoEndpointWithLargePayload",
+              "timedOut": null,
+              "duration": 61,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Build a large payload based on the server-provided sample notes field\ncy.api(`${base}/manyFieldsPayload`).then(sample => {\n  const baseNotes = sample.body && sample.body.notes || 'x';\n  let large = baseNotes.repeat(Math.ceil(10000 / baseNotes.length)).substring(0, 10000);\n  const body = {\n    data: large\n  };\n  cy.api({\n    url: `${base}/echo`,\n    method: 'POST',\n    body: body,\n    headers: {\n      'content-type': 'application/json'\n    }\n  }).then(res => {\n    expect(res.status).to.equal(200);\n    expect(res.headers['content-type']).to.include('application/json');\n    expect(res.body).to.have.nested.property('echo.data', large);\n  });\n});",
+              "err": {},
+              "uuid": "a7d5cbd6-d139-4589-8173-1a7afdadb656",
+              "parentUUID": "0a9543ed-4bf0-43b3-97dd-22228494ff2a",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "113e65ee-7473-4f6c-8d09-a30a58305fa5",
+            "9f317be9-2323-4515-a7f8-5b521aa661a5",
+            "9b4b0fb3-fa9c-439a-84e8-a5ce25382f95",
+            "0ef64ef8-f170-4ab3-b688-92123bce74c6",
+            "9b1dd6d1-1a66-4f4b-898a-5f78c65ccdfe",
+            "f1252b30-4b36-4129-8271-4c11bdba1f8c",
+            "a7d5cbd6-d139-4589-8173-1a7afdadb656"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 5761,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/results",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}
