@@ -98,5 +98,14 @@ public class MockApiServer {
             payload.put("notes", "test user with many fields");
             return gson.toJson(payload);
         });
+
+        // Small quirky endpoint used by tests
+        get("/chiquito", (req, res) -> {
+            res.type("application/json");
+            Gson gson = new Gson();
+            Map<String, String> response = new HashMap<>();
+            response.put("condemor", "Jaaaaaaaarrll! No puedor! No puedorrrr!");
+            return gson.toJson(response);
+        });
     }
 }
