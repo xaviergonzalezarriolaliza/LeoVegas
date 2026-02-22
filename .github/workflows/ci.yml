@@ -192,7 +192,6 @@ jobs:
         pkill -f 'com.leovegas.mockapi.MockApiServer' || true
 
   Playwright:
-  Playwright:
     needs: Cypress
     runs-on: ubuntu-latest
     strategy:
@@ -200,11 +199,8 @@ jobs:
       matrix:
         include:
           - browser: chromium
-            device: ''
           - browser: firefox
-            device: ''
           - browser: webkit
-            device: ''
           - browser: webkit
             device: 'iPhone 13'
     steps:
