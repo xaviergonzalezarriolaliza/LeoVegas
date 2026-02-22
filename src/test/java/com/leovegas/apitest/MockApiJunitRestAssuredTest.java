@@ -300,6 +300,18 @@ public class MockApiJunitRestAssuredTest {
     }
 
     @Test
+    @Order(10)
+    public void testExampleCobardeDeLaPradera() {
+        given()
+        .when()
+            .get("/chiquito")
+        .then()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .body("condemor", equalTo("Jaaaaaaaarrll! No puedor! No puedorrrr!"));
+    }
+
+    @Test
     @Order(7)
     public void testEchoEndpointWithLargePayload_jUnit() {
         // Build a large payload by repeating a string value obtained from the mock server
