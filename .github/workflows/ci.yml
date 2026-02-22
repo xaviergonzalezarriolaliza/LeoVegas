@@ -197,7 +197,6 @@ jobs:
           - browser: chromium
           - browser: firefox
           - browser: webkit
-          - browser: webkit
             device: 'iPhone 13'
           - browser: chromium
             device: 'Samsung Galaxy S20'
