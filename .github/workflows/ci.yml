@@ -69,6 +69,7 @@ jobs:
         exit ${TEST_RESULT:-0}
 
   Cypress:
+    needs: restassured
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -150,6 +151,7 @@ jobs:
         pkill -f 'com.leovegas.mockapi.MockApiServer' || true
 
   Playwright:
+    needs: Cypress
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
