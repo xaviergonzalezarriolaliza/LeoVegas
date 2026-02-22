@@ -108,3 +108,5 @@ If you'd like, I can also:
 - Create a small `scripts/` helper (bash) to start the mock server and run all suites locally.
 
 Which of those would you prefer?
+
+Trigger GitHub Actions run at 2026-02-22T12:07:26Z
