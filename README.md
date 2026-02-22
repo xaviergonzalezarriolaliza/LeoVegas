@@ -1,103 +1,110 @@
 # LeoVegas — Local run & CI notes
 
+This repository contains a small Spark-based mock API used by three test suites:
+
+- Java RestAssured/JUnit tests (`src/test/java/com/leovegas/apitest/*`)
+- Cypress API/UI tests (`cypress/e2e/*.js` using `cypress-plugin-api`)
+- Playwright Java tests (`PlaywrightMockApiTest`) — executed as a JUnit class
+
+CI is defined at `.github/workflows/ci.yml` and contains three independent jobs: `restassured`, `cypress`, and `playwright`.
+
 ## Run locally
 
-- Start the mock server (background):
+1. Build the project and copy runtime dependencies (recommended for CI parity):
+
+```bash
+mvn -B package
+mvn dependency:copy-dependencies -DincludeScope=runtime
+```
+
+2. Start the mock server (CI-style, classpath from target):
+
+```bash
+nohup java -cp "target/classes:target/dependency/*" com.leovegas.mockapi.MockApiServer > nohup.out 2>&1 &
+echo $! > server.pid
+```
+
+Allow a few seconds for the server to bind; verify with:
+
+```bash
+curl --fail http://localhost:4567/hello
+```
+
+Alternative (developer convenience):
 
 ```bash
 mvn exec:java -Dexec.mainClass="com.leovegas.mockapi.MockApiServer" &
 ```
 
-- Run tests:
+3. Run Java RestAssured tests:
 
 ```bash
-mvn test
+mvn -Dtest=com.leovegas.apitest.MockApiJunitRestAssuredTest test
 ```
 
-Notes:
-- Allow a few seconds after starting the mock server for it to bind before running tests.
-- If tests require a specific host/port, ensure the mock server uses that same host/port (usually `localhost`).
+4. Run Cypress tests (requires Node):
 
-## GitHub Actions: common issues and fixes
-
-If your workflow file is incorrectly named or placed, GitHub Actions will not run. Follow these points to ensure workflows run successfully:
-
-- File location and name: place the workflow at `.github/workflows/maven.yml`. If your file is named `mavan.yml` or sits in the repo root, rename/move it to `.github/workflows/maven.yml`.
-- Workflow trigger: ensure the workflow has `on: [push, pull_request]` (or equivalent) so pushes and PRs run the job.
-- Java setup: use `actions/setup-java` with the correct `distribution` and `java-version` matching your `pom.xml`.
-- Start mock server before tests: if tests require the local mock server, add a step that starts it in background and waits briefly before running `mvn test`. Example:
-
-```yaml
-- name: Start Mock API server
-  run: |
-    nohup mvn exec:java -Dexec.mainClass="com.leovegas.mockapi.MockApiServer" > server.log 2>&1 &
-    sleep 3
+```bash
+# if package.json exists
+npm ci
+# run cypress headless
+npx cypress run --headless --spec "cypress/e2e/**/*.js"
 ```
 
-Alternatively use `&` and `sleep` if `nohup` is not available:
+5. Run Playwright Java tests (browsers required):
 
-```yaml
-- name: Start Mock API server
-  run: mvn exec:java -Dexec.mainClass="com.leovegas.mockapi.MockApiServer" &
-- run: sleep 3
+```bash
+# install Playwright browsers
+npx playwright install --with-deps
+# run the Playwright JUnit test class
+mvn -Dtest=com.leovegas.apitest.PlaywrightMockApiTest test
 ```
 
-- Use dependency caching: cache Maven repository to speed up builds with `actions/cache`.
-- Ensure build uses non-interactive flags where needed, e.g. `mvn -B test`.
-- Port and network: ensure the mock server binds to `0.0.0.0` or `localhost` and does not require privileged ports.
-- Failure diagnostics: capture `server.log` (created above) as an artifact or print last lines on failure to help debugging.
+## Notes about recent changes
 
-## Minimal example workflow
+- Tests now derive representative payloads from the mock server's `/manyFieldsPayload` endpoint instead of using hard-coded payloads. This reduces brittleness and ensures the tests better mirror real data.
+- SLF4J: a test-scoped `slf4j-simple` binding was added so tests emit visible logs (see `pom.xml`). If you prefer a different logging backend, update the test scope dependency.
+- Cypress: tests use `cypress-plugin-api` and `cy.api()` to call the mock server. Ensure `cypress-plugin-api` is installed in `node_modules` or `package.json`.
+- CI pin: GitHub Actions use Node `18.18.0` to avoid a known `tsx` loader/runtime issue on newer Node releases. The workflow installs Playwright browsers on Linux runners.
 
-Create `.github/workflows/maven.yml` with contents along these lines:
+## CI (quick troubleshooting)
 
-```yaml
-name: CI
+- Workflow file: `.github/workflows/ci.yml` (jobs: `restassured`, `cypress`, `playwright`).
+- The CI jobs start the mock server with the same `java -cp "target/classes:target/dependency/*"` command used above — this is the recommended approach for parity with local runs.
+- If a job times out waiting for the mock server, inspect `nohup.out` (the workflow prints the file tail on failure) and upload it as an artifact.
+- For Cypress runtime errors related to `tsx` or `--loader`, use Node `18.18.0` (that's the runner version pinned in the workflow).
 
-on: [push, pull_request]
+## Helpful commands
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+Start server (background):
 
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: '17'
-
-    - name: Cache Maven packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-m2-
-
-    - name: Build (compile only)
-      run: mvn -B -DskipTests package
-
-    - name: Start Mock API server
-      run: |
-        nohup mvn exec:java -Dexec.mainClass="com.leovegas.mockapi.MockApiServer" > server.log 2>&1 &
-        sleep 3
-
-    - name: Run tests
-      run: mvn -B test
-
-    - name: Upload server log on failure
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: server-log
-        path: server.log
+```bash
+nohup java -cp "target/classes:target/dependency/*" com.leovegas.mockapi.MockApiServer > nohup.out 2>&1 &
 ```
 
-Adjust `java-version` to match your `pom.xml` and ensure the mock server's port is available.
+Tail logs:
+
+```bash
+tail -n 200 nohup.out
+```
+
+Stop server (local):
+
+```bash
+if [ -f server.pid ]; then kill $(cat server.pid); else pkill -f 'com.leovegas.mockapi.MockApiServer'; fi
+```
+
+## Suggestions
+
+- Add `node_modules` to `.gitignore` if not already ignored and remove any accidentally committed `node_modules` from history.
+- Consider adding CI caching for Maven and npm to speed runs (`actions/cache`).
+- If you want test logs richer than `slf4j-simple`, add an SLF4J binding of choice (e.g., `logback-classic`) to `test` scope.
 
 ---
 
-If you want, I can: move/rename your existing workflow to `.github/workflows/maven.yml`, or create the workflow file for you. Which would you prefer?
+If you'd like, I can also:
+
+- Add a short `CONTRIBUTING.md` with exact run steps per OS, or
+- Create a small `scripts/` helper (bash) to start the mock server and run all suites locally.
+
+Which of those would you prefer?
