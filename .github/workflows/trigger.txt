@@ -1,3 +1,3 @@
 # Trigger GitHub Actions
 
-This file is used to trigger a workflow run.
+This file is used to trigger a workflow run
