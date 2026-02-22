@@ -201,6 +201,8 @@ jobs:
           - browser: chromium
             device: 'Samsung Galaxy S20'
           - browser: chromium
+            channel: 'msedge'
+          - browser: chromium
             device: 'Galaxy S9'
           - browser: chromium
             device: 'Galaxy Tab S7'
