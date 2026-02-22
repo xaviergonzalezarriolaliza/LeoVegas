@@ -1,0 +1,149 @@
+name: CI - Build, Java tests, Mock API, Cypress
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.java'
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.xml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.java'
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.xml'
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Set up Node.js for Playwright
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: Install Playwright system dependencies and browsers
+      if: runner.os == 'Linux'
+      run: |
+        npx playwright@latest install --with-deps
+      shell: bash
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+    - name: Copy dependencies
+      run: mvn dependency:copy-dependencies -DincludeScope=runtime
+    - name: Start Mock API Server and Run Java Tests
+      run: |
+        nohup java -cp "target/classes:target/dependency/*" com.leovegas.mockapi.MockApiServer > nohup.out 2>&1 &
+        SERVER_PID=$!
+        for i in {1..40}; do
+          if curl --fail http://localhost:4567/hello; then
+            echo 'Mock API Server is up!';
+            break;
+          fi;
+          echo 'Waiting for Mock API Server...';
+          sleep 2;
+        done
+        if ! curl --fail http://localhost:4567/hello; then
+          echo "Server did not start in time" >&2
+          tail -n 100 nohup.out || echo "nohup.out not found"
+          exit 1
+        fi
+        mvn test || TEST_RESULT=$?
+        echo "Stopping Mock API Server (PID $SERVER_PID)"
+        kill $SERVER_PID || true
+        exit ${TEST_RESULT:-0}
+
+  cypress:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: Build with Maven (for mock server classes)
+      run: mvn -B package --file pom.xml
+    - name: Copy dependencies
+      run: mvn dependency:copy-dependencies -DincludeScope=runtime
+    - name: Start Mock API Server for Cypress
+      run: |
+        nohup java -cp "target/classes:target/dependency/*" com.leovegas.mockapi.MockApiServer > nohup.out 2>&1 &
+        SERVER_PID=$!
+        for i in {1..40}; do
+          if curl --fail http://localhost:4567/hello; then
+            echo 'Mock API Server is up!';
+            break;
+          fi;
+          echo 'Waiting for Mock API Server...';
+          sleep 2;
+        done
+        if ! curl --fail http://localhost:4567/hello; then
+          echo "Server did not start in time" >&2
+          tail -n 100 nohup.out || echo "nohup.out not found"
+          exit 1
+        fi
+        echo "Mock API Server ready (PID $SERVER_PID)" > server.pid
+        echo $SERVER_PID
+    - name: Install Node dependencies
+      run: |
+        if [ -f package.json ]; then
+          npm ci
+        else
+          npm init -y
+          npm install --save-dev cypress cypress-plugin-api
+        fi
+    - name: Run Cypress tests
+      run: |
+        npx cypress run --headless --spec "cypress/e2e/**/*.js"
+      env:
+        CI: true
+    - name: Collect nohup and stop server
+      if: always()
+      run: |
+        echo "--- nohup.out ---"
+        tail -n 200 nohup.out || true
+        if [ -f server.pid ]; then
+          kill $(cat server.pid) || true
+        else
+          pkill -f 'com.leovegas.mockapi.MockApiServer' || true
+        fi
+    - name: Archive test reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: surefire-reports
+        path: target/surefire-reports/
+    - name: Generate Surefire HTML report (repo generator)
+      if: always()
+      run: |
+        python3 --version || true
+        python3 scripts/generate_surefire_html.py || python scripts/generate_surefire_html.py || true
+    - name: Upload Surefire HTML report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: junit-report
+        path: target/site/
+    - name: Stop Mock API Server
+      if: always()
+      run: |
+        pkill -f 'com.leovegas.mockapi.MockApiServer' || true

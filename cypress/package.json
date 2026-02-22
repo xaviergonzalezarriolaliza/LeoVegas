@@ -1,0 +1,12 @@
+{
+  "name": "leovegas-cypress",
+  "private": true,
+  "devDependencies": {
+    "cypress": "^12.12.0"
+  },
+  "scripts": {
+    "open": "cypress open",
+    "run": "cypress run",
+    "generate": "node ../scripts/generate_cypress_tests.js"
+  }
+}

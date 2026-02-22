@@ -1,5 +1,6 @@
 {
   "editor.inlineSuggest.enabled": true,
   "github.copilot.enable": true,
-  "github.copilot.inlineSuggest.enable": true
+  "github.copilot.inlineSuggest.enable": true,
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
