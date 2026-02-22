@@ -199,6 +199,14 @@ jobs:
           - browser: webkit
           - browser: webkit
             device: 'iPhone 13'
+          - browser: chromium
+            device: 'Samsung Galaxy S20'
+          - browser: chromium
+            device: 'Galaxy S9'
+          - browser: chromium
+            device: 'Galaxy Tab S7'
+          - browser: webkit
+            device: 'iPad (gen 7)'
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
