@@ -68,7 +68,7 @@ jobs:
         kill $SERVER_PID || true
         exit ${TEST_RESULT:-0}
 
-  cypress:
+  Cypress:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -149,7 +149,7 @@ jobs:
       run: |
         pkill -f 'com.leovegas.mockapi.MockApiServer' || true
 
-  playwright:
+  Playwright:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
