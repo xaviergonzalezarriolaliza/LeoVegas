@@ -93,20 +93,3 @@ Stop server (local):
 ```bash
 if [ -f server.pid ]; then kill $(cat server.pid); else pkill -f 'com.leovegas.mockapi.MockApiServer'; fi
 ```
-
-## Suggestions
-
-- Add `node_modules` to `.gitignore` if not already ignored and remove any accidentally committed `node_modules` from history.
-- Consider adding CI caching for Maven and npm to speed runs (`actions/cache`).
-- If you want test logs richer than `slf4j-simple`, add an SLF4J binding of choice (e.g., `logback-classic`) to `test` scope.
-
----
-
-If you'd like, I can also:
-
-- Add a short `CONTRIBUTING.md` with exact run steps per OS, or
-- Create a small `scripts/` helper (bash) to start the mock server and run all suites locally.
-
-Which of those would you prefer?
-
-Trigger GitHub Actions run at 2026-02-22T12:07:26Z
