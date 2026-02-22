@@ -68,18 +68,18 @@ jobs:
         kill $SERVER_PID || true
         exit ${TEST_RESULT:-0}
     - name: Archive surefire reports
-      if: always()
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: restassured-surefire-reports
         path: target/surefire-reports/
     - name: Generate Surefire HTML report (restassured)
-      if: always()
+      if: ${{ always() }}
       run: |
         python3 --version || true
         python3 scripts/generate_surefire_html.py || python scripts/generate_surefire_html.py || true
     - name: Upload RestAssured HTML report
-      if: always()
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: restassured-html-report
@@ -139,28 +139,28 @@ jobs:
       env:
         CI: true
     - name: Merge mochawesome JSON results
-      if: always()
+      if: ${{ always() }}
       run: |
         mkdir -p cypress/results || true
         npx mochawesome-merge cypress/results/*.json -o cypress/results/mochawesome.json || true
     - name: Generate Mochawesome HTML report
-      if: always()
+      if: ${{ always() }}
       run: |
         npx marge cypress/results/mochawesome.json -f cypress-report -o cypress/results/html || true
     - name: Fallback: generate mochawesome HTML via Python
-      if: always()
+      if: ${{ always() }}
       run: |
         if [ ! -d cypress/results/html ]; then
           python3 scripts/generate_mochawesome_html.py || python scripts/generate_mochawesome_html.py || true
         fi
     - name: Upload Cypress HTML report
-      if: always()
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: cypress-html-report
         path: cypress/results/html/
     - name: Collect nohup and stop server
-      if: always()
+      if: ${{ always() }}
       run: |
         echo "--- nohup.out ---"
         tail -n 200 nohup.out || true
@@ -170,24 +170,24 @@ jobs:
           pkill -f 'com.leovegas.mockapi.MockApiServer' || true
         fi
     - name: Archive test reports
-      if: always()
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: surefire-reports
         path: target/surefire-reports/
     - name: Generate Surefire HTML report (repo generator)
-      if: always()
+      if: ${{ always() }}
       run: |
         python3 --version || true
         python3 scripts/generate_surefire_html.py || python scripts/generate_surefire_html.py || true
     - name: Upload Surefire HTML report
-      if: always()
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: junit-report
         path: target/site/
     - name: Stop Mock API Server
-      if: always()
+      if: ${{ always() }}
       run: |
         pkill -f 'com.leovegas.mockapi.MockApiServer' || true
 
@@ -240,23 +240,23 @@ jobs:
         kill $SERVER_PID || true
         exit ${TEST_RESULT:-0}
     - name: Archive Playwright surefire report
-      if: always()
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: playwright-surefire-reports
         path: target/surefire-reports/
     - name: Generate Surefire HTML report (playwright)
-      if: always()
+      if: ${{ always() }}
       run: |
         python3 --version || true
         python3 scripts/generate_surefire_html.py || python scripts/generate_surefire_html.py || true
     - name: Upload Playwright HTML report
-      if: always()
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: playwright-html-report
         path: target/site/surefire-report.html
     - name: Stop Mock API Server (cleanup)
-      if: always()
+      if: ${{ always() }}
       run: |
         pkill -f 'com.leovegas.mockapi.MockApiServer' || true
