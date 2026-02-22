@@ -147,7 +147,7 @@ jobs:
       if: ${{ always() }}
       run: |
         npx marge cypress/results/mochawesome.json -f cypress-report -o cypress/results/html || true
-    - name: Fallback: generate mochawesome HTML via Python
+    - name: Fallback generate mochawesome HTML via Python
       if: ${{ always() }}
       run: |
         if [ ! -d cypress/results/html ]; then
