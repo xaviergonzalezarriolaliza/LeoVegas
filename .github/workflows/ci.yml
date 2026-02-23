@@ -146,6 +146,18 @@ jobs:
       if: ${{ always() }}
       run: |
         npx marge cypress/results/mochawesome.json -f cypress-report -o cypress/results/html || true
+    - name: Aggregate Cypress checks and enforce threshold
+      if: ${{ always() }}
+      run: |
+        echo "Aggregating Cypress checks summary"
+        # Ensure node deps installed earlier
+        node ./scripts/aggregate_checks.js
+      env:
+        CI: true
+        CHECKS_PATH: report/checks.json
+        OUT_JSON: report/checks-summary.json
+        OUT_HTML: report/checks-summary.html
+        CHECKS_THRESHOLD: 80
     - name: Fallback generate mochawesome HTML via Python
       if: ${{ always() }}
       run: |
@@ -158,6 +170,10 @@ jobs:
         mkdir -p report-artifacts/cypress || true
         if [ -d cypress/results/html ]; then cp -r cypress/results/html report-artifacts/cypress/ || true; fi
         if [ -f cypress/results/mochawesome.json ]; then cp cypress/results/mochawesome.json report-artifacts/cypress/ || true; fi
+        # Include checks summaries if present
+        if [ -f report/checks.json ]; then cp report/checks.json report-artifacts/cypress/ || true; fi
+        if [ -f report/checks-summary.json ]; then cp report/checks-summary.json report-artifacts/cypress/ || true; fi
+        if [ -f report/checks-summary.html ]; then cp report/checks-summary.html report-artifacts/cypress/ || true; fi
     - name: Upload Cypress report
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
