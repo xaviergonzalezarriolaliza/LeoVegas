@@ -92,4 +92,4 @@ Stop server (local):
 
 ```bash
 if [ -f server.pid ]; then kill $(cat server.pid); else pkill -f 'com.leovegas.mockapi.MockApiServer'; fi
-```
+```ci: trigger Mon, Feb 23, 2026  1:15:16 PM
