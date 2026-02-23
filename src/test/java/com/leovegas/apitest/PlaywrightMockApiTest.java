@@ -227,4 +227,15 @@ public class PlaywrightMockApiTest {
         assertEquals("tag1,tag2", obj.get("tags").getAsString());
         assertEquals("test user with many fields", obj.get("notes").getAsString());
     }
+
+    @Test
+    @Order(7)
+    public void testChiquitoEndpoint() throws Exception {
+        HttpResponse<String> resp = get("/chiquito");
+        assertEquals(200, resp.statusCode());
+        Gson g = new Gson();
+        JsonObject obj = g.fromJson(resp.body(), JsonObject.class);
+        assertTrue(obj.has("condemor"));
+        assertEquals("Jaaaaaaaarrll! No puedor! No puedorrrr!", obj.get("condemor").getAsString());
+    }
 }
