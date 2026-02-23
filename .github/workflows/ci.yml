@@ -69,6 +69,10 @@ jobs:
         echo "Stopping Mock API Server (PID $SERVER_PID)"
         kill $SERVER_PID || true
         exit ${TEST_RESULT:-0}
+    - name: Generate RestAssured HTML report
+      if: ${{ always() }}
+      run: |
+        python scripts/generate_surefire_html.py || python3 scripts/generate_surefire_html.py || true
     - name: Collect RestAssured reports
       if: ${{ always() }}
       run: |
@@ -275,6 +279,10 @@ jobs:
         echo "Stopping Mock API Server (PID $SERVER_PID)"
         kill $SERVER_PID || true
         exit ${TEST_RESULT:-0}
+    - name: Generate Playwright HTML report
+      if: ${{ always() }}
+      run: |
+        python scripts/generate_surefire_html.py || python3 scripts/generate_surefire_html.py || true
     - name: Collect Playwright reports
       if: ${{ always() }}
       run: |
