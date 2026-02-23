@@ -8,14 +8,12 @@ describe('Cypress - Response Time for Mock API Endpoints', () => {
     endpoints.forEach((ep) => {
       const url = base + ep;
       const start = Date.now();
-      cy.request({ url, failOnStatusCode: false }).then((resp) => {
+      cy.api({ url, failOnStatusCode: false }).then((resp) => {
         const elapsed = Date.now() - start;
-        // basic status code assertion and a timing measurement
-        expect(typeof resp.status).to.equal('number');
-        // log timing so it appears in CI output
+        // assert there is a numeric status and log timing for CI
+        expect(resp).to.have.property('status').that.is.a('number');
         // eslint-disable-next-line no-console
         console.log(`Cypress: ${ep} -> status=${resp.status} time=${elapsed}ms`);
-        // assert elapsed is a non-negative number
         expect(elapsed).to.be.a('number').and.to.be.at.least(0);
       });
     });

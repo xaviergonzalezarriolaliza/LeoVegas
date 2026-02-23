@@ -1,0 +1,42 @@
+{
+  "totalChecks": 9,
+  "passedChecks": 9,
+  "checks": {
+    "main:hello": {
+      "pass": 1,
+      "total": 1
+    },
+    "main:manyFieldsPayload": {
+      "pass": 1,
+      "total": 1
+    },
+    "main:echo_post": {
+      "pass": 1,
+      "total": 1
+    },
+    "main:notfound_404": {
+      "pass": 1,
+      "total": 1
+    },
+    "main:chiquito": {
+      "pass": 1,
+      "total": 1
+    },
+    "public:homepage_status": {
+      "pass": 2,
+      "total": 2
+    },
+    "public:header": {
+      "pass": 1,
+      "total": 1
+    },
+    "public:nav": {
+      "pass": 1,
+      "total": 1
+    },
+    "public:title": {
+      "pass": 1,
+      "total": 1
+    }
+  }
+}
